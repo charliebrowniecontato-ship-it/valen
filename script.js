@@ -149,7 +149,7 @@ solutionCards[1]?.classList.add('is-active');
     const exit = desktop.matches ? ease((cp-.88)/.12) : 0;
     statue.style.transform = `translate3d(${(-12*(1-entry)+7*exit).toFixed(3)}%,${(10*(1-entry)+14*exit).toFixed(3)}%,0) rotate(${(-3*(1-entry)).toFixed(3)}deg)`;
     statue.style.opacity = String(1 - exit*.5);
-    arm.style.transform = `rotate(${(48*(1-lift)-2*lift).toFixed(3)}deg)`;
+    arm.style.transform = `rotate(${(48*(1-lift)+12*lift).toFixed(3)}deg)`;
     contact.style.setProperty('--gesture',lift.toFixed(4));
     const hp = clamp(y / geometry.hero.height);
     orbit.style.transform = `translate3d(${smoothPointer.x*6}px,${hp*75+smoothPointer.y*4}px,0) rotate(${hp*70-12}deg) scale(${1-hp*.08})`;

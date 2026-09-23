@@ -16,4 +16,16 @@ Canonical, Open Graph, Twitter Card, JSON-LD, `robots.txt` e `sitemap.xml` apont
 
 ## Motion
 
-As cenas foram integradas a partir da pasta Valen_Motion_Final: V e órbita no hero, placas separadas em Sobre, redes em Desafios e Soluções, órbita do Método e estátua em Contato. Os quadros WebP são carregados quando a cena se aproxima da viewport e seguem a rolagem nos dispositivos com movimento habilitado. Hover/foco das soluções seleciona o núcleo visual correspondente. As placas e o braço da estátua são camadas independentes. No celular e com `prefers-reduced-motion: reduce`, as artes estáticas continuam disponíveis. Se uma sequência falhar ao carregar, o pôster permanece visível.
+Rolagem nativa, sem captura da roda do mouse. Um único controlador interpola os movimentos e pausa quando está ocioso ou quando a aba está oculta.
+
+- Início: V e órbita em camadas independentes, com profundidade ao mover o cursor.
+- Sobre: cena fixa temporariamente durante a rolagem; três placas se alinham, com área livre para todas as bordas.
+- Método: órbita acompanha a progressão das etapas.
+- Soluções: destaque responde a mouse, foco de teclado e toque.
+- Contato: estátua entra, levanta o braço em direção ao botão e sai. O braço gira continuamente em torno do ombro, sem sobreposição de quadros.
+
+Em telas menores, as cenas seguem o fluxo normal da página, com movimento mais curto. Com `prefers-reduced-motion: reduce`, a rolagem estendida é desativada e as artes permanecem estáticas. Se uma camada não carregar, o pôster permanece visível.
+
+## Verificação
+
+Sintaxe JavaScript, estrutura HTML e caminhos de imagens verificados. Na versão publicada, as placas foram conferidas abertas e empilhadas; a estátua, na entrada e no fim do gesto. O link do contato aponta para o WhatsApp informado no projeto.
