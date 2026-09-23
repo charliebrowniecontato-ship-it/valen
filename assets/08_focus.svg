@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 100 100"><defs>
+  <linearGradient id="blueGlass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#00D8FF"/>
+    <stop offset="0.35" stop-color="#1747FF"/>
+    <stop offset="0.72" stop-color="#081947"/>
+    <stop offset="1" stop-color="#050608"/>
+  </linearGradient>
+  <linearGradient id="cyanBlue" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#00D8FF"/>
+    <stop offset="1" stop-color="#1747FF"/>
+  </linearGradient>
+  <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="3" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs><g stroke="url(#cyanBlue)" stroke-width="5" fill="none" stroke-linecap="square" filter="url(#glow)"><path d="M12 34V12H34M66 12H88V34M88 66V88H66M34 88H12V66"/></g><g transform="translate(25,22) scale(.5)"><g filter="url(#glow)" fill="url(#blueGlass)">
+      <path d="M13 10 H31 L50 63 L67 10 H86 L53 91 L46 91 Z"/>
+      <path d="M62 31 L78 19 L68 42 L55 50 Z"/>
+    </g></g></svg>
