@@ -68,8 +68,9 @@
           </div>
           <div class="hero-foot"><span>Conversa direta sobre a sua operação.</span><span>Sem proposta genérica.</span></div>
         </div>
-        <div class="hero-art motion-scene" data-motion="hero" data-frames="5" aria-label="Símbolo tridimensional da Valen em movimento">
-          <img class="motion-poster" src="/assets/motion/hero/poster/poster-hero.webp" width="900" height="900" alt="Símbolo tridimensional em V da Valen com órbita azul" fetchpriority="high" decoding="async">
+        <div class="hero-art motion-scene" data-motion="hero" aria-label="Símbolo tridimensional da Valen em movimento">
+          <img class="hero-orbit" src="/assets/valen-orbit.webp" width="900" height="900" alt="" aria-hidden="true" decoding="async">
+          <img class="hero-v" src="/assets/valen-v-3d.webp" width="900" height="900" alt="Símbolo tridimensional em V da Valen" fetchpriority="high" decoding="async">
           <span class="art-caption">Estratégia em movimento / Valen</span>
         </div>
       </div>
@@ -88,14 +89,16 @@
             <a class="inline-link" href="#desafios">Veja onde começamos <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-        <div class="layers-story" data-motion="layers">
+        <div class="layers-story" data-motion="layers"><div class="layers-sticky">
           <div class="layers-story-copy"><p class="eyebrow"><span class="eyebrow-line"></span>Uma operação, três frentes</p><h3>Quando as partes se alinham, o crescimento ganha estrutura.</h3><p>Marketing cria oportunidades. Vendas transforma demanda em receita. Tecnologia dá visibilidade para decidir o próximo passo.</p></div>
           <div class="layers-art" aria-label="Três camadas que se aproximam e formam uma operação conectada">
             <img class="motion-poster" src="/assets/motion/layers/poster/poster.webp" width="900" height="900" alt="Três placas azuis conectadas" loading="lazy" decoding="async">
             <img class="layer-plate layer-plate-bottom" src="/assets/motion/layers/layers/placa-03-inteira.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async">
             <img class="layer-plate layer-plate-middle" src="/assets/motion/layers/layers/placa-02-inteira.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async">
             <img class="layer-plate layer-plate-top" src="/assets/motion/layers/layers/placa-01-inteira.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async">
-          </div>
+          <div class="layer-labels" aria-hidden="true"><span>01 / Marketing</span><span>02 / Vendas</span><span>03 / Tecnologia</span></div></div>
+          <div class="scene-progress" aria-hidden="true"><span></span></div>
+        </div>
         </div>
         <div class="intro-strip" aria-label="As três frentes da Valen"><span>Marketing</span><span>Vendas</span><span>Tecnologia</span><strong>Uma direção: resultado comercial</strong></div>
       </div>
@@ -109,7 +112,7 @@
           <article><span class="num">01</span><div><h3>Leads que não viram vendas</h3><p>Existe investimento em aquisição, mas marketing e comercial não operam na mesma direção.</p></div><img class="problem-icon" src="/assets/motion/new/focus/poster.webp" width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async"></article>
           <article><span class="num">02</span><div><h3>Vendas no improviso</h3><p>Sem processo, cadência e acompanhamento, oportunidades se perdem pelo caminho.</p></div><img class="problem-icon" src="/assets/motion/new/advance/poster.webp" width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async"></article>
           <article><span class="num">03</span><div><h3>Dados sem decisão</h3><p>Há informação disponível, mas ela ainda não mostra o que corrigir primeiro.</p></div><img class="problem-icon" src="/assets/motion/new/data/poster.webp" width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async"></article>
-        </div><div class="problem-art motion-scene" data-motion="problems" data-frames="4"><img class="motion-poster" src="/assets/motion/problems/poster/poster.webp" width="900" height="900" alt="Rede de pontos mostrando gargalos e conexões comerciais" loading="lazy" decoding="async"></div></div>
+        </div><div class="problem-art motion-scene" data-motion="problems"><img class="motion-poster" src="/assets/motion/problems/poster/poster.webp" width="900" height="900" alt="Rede de pontos mostrando gargalos e conexões comerciais" loading="lazy" decoding="async"></div></div>
       </div>
     </section>
 
@@ -119,7 +122,7 @@
           <p class="eyebrow"><span class="eyebrow-line"></span>03 — Método Valen</p>
           <h2 id="method-title" class="display">Da prioridade<br><em>à escala.</em></h2>
           <p>Um ciclo claro para sair do diagnóstico e transformar decisão em rotina de crescimento.</p>
-          <div class="method-art motion-scene" data-motion="method" data-frames="4"><img class="motion-poster" src="/assets/motion/method/poster/poster.webp" width="900" height="900" alt="Órbita que indica a progressão do método Valen" loading="lazy" decoding="async"></div>
+          <div class="method-art motion-scene" data-motion="method"><img class="motion-poster" src="/assets/motion/method/poster/poster.webp" width="900" height="900" alt="Órbita que indica a progressão do método Valen" loading="lazy" decoding="async"></div>
         </div>
         <ol class="steps">
           <li><span>01</span><div><h3>Diagnosticar</h3><p>Encontrar o gargalo que limita o crescimento agora.</p></div></li>
@@ -136,20 +139,30 @@
         <div class="section-top"><p class="eyebrow light"><span class="eyebrow-line"></span>04 — Soluções</p><span>Frentes conectadas</span></div>
         <div class="section-heading"><h2 id="solutions-title" class="display">O que precisa<br>funcionar <em>junto.</em></h2><p>Cada frente entra conforme a prioridade definida no diagnóstico. O objetivo é criar uma operação capaz de avançar.</p></div>
         <div class="solutions-grid">
-          <article><span class="num">01 / Aquisição</span><h3>Marketing com intenção comercial.</h3><p>Oferta, campanhas, páginas e mensagens construídas para gerar oportunidades mais qualificadas.</p><ul><li>Posicionamento e oferta</li><li>Campanhas e criativos</li><li>Funis e páginas</li></ul></article>
-          <article><span class="num">02 / Conversão</span><h3>Vendas com processo e direção.</h3><p>Qualificação, cadência e acompanhamento para transformar demanda em receita.</p><ul><li>Pipeline e cadência</li><li>Atendimento e follow-up</li><li>Gestão de indicadores</li></ul></article>
-          <article><span class="num">03 / Operação</span><h3>Tecnologia que sustenta decisões.</h3><p>CRM, automações e dados para dar visibilidade ao que acontece em cada etapa.</p><ul><li>CRM e automações</li><li>Integrações</li><li>Dashboards e dados</li></ul></article>
+          <article tabindex="0"><span class="num">01 / Aquisição</span><h3>Marketing com intenção comercial.</h3><p>Oferta, campanhas, páginas e mensagens construídas para gerar oportunidades mais qualificadas.</p><ul><li>Posicionamento e oferta</li><li>Campanhas e criativos</li><li>Funis e páginas</li></ul></article>
+          <article tabindex="0"><span class="num">02 / Conversão</span><h3>Vendas com processo e direção.</h3><p>Qualificação, cadência e acompanhamento para transformar demanda em receita.</p><ul><li>Pipeline e cadência</li><li>Atendimento e follow-up</li><li>Gestão de indicadores</li></ul></article>
+          <article tabindex="0"><span class="num">03 / Operação</span><h3>Tecnologia que sustenta decisões.</h3><p>CRM, automações e dados para dar visibilidade ao que acontece em cada etapa.</p><ul><li>CRM e automações</li><li>Integrações</li><li>Dashboards e dados</li></ul></article>
         </div>
-        <div class="solutions-showcase"><div class="solutions-art motion-scene" data-motion="solutions" data-frames="5"><img class="motion-poster" src="/assets/motion/solutions/poster/poster.webp" width="900" height="900" alt="Rede de marketing, vendas e tecnologia conectada" loading="lazy" decoding="async"><img class="solution-highlight" src="/assets/motion/solutions/layers/hover-vendas.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><div class="showcase-copy"><span>Uma operação conectada</span><p>O próximo passo fica mais claro quando todas as frentes trabalham sobre a mesma direção.</p></div></div>
+        <div class="solutions-showcase"><div class="solutions-art motion-scene" data-motion="solutions"><img class="motion-poster" src="/assets/motion/solutions/poster/poster.webp" width="900" height="900" alt="Rede de marketing, vendas e tecnologia conectada" loading="lazy" decoding="async"><img class="solution-highlight" src="/assets/motion/solutions/layers/hover-vendas.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><div class="showcase-copy"><span>Uma operação conectada</span><p>O próximo passo fica mais claro quando todas as frentes trabalham sobre a mesma direção.</p></div></div>
         <div class="solution-bottom"><p>Encontre o gargalo. Organize a operação. Acelere o resultado.</p><a class="button button-outline" href="https://wa.me/558487149954?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20os%20gargalos%20da%20minha%20opera%C3%A7%C3%A3o." target="_blank" rel="noopener noreferrer">Falar sobre minha operação <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
 
     <section class="contact section-pad" id="contato" aria-labelledby="contact-title">
-      <div class="container contact-grid">
-        <div><p class="eyebrow"><span class="eyebrow-line"></span>Próxima ação</p><h2 id="contact-title" class="display">Vamos encontrar<br><em>o próximo passo.</em></h2><div class="contact-art" data-motion="contact" aria-label="Estátua ciborgue aponta para a próxima ação"><img class="motion-poster" src="/assets/motion/contact/poster/poster.webp" width="900" height="900" alt="Estátua ciborgue aponta para o contato da Valen" loading="lazy" decoding="async"><img class="statue-body" src="/assets/motion/contact/layers/corpo-fixo.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async"><img class="statue-arm" src="/assets/motion/contact/layers/braco-01.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async"></div></div>
-        <div class="contact-right"><p>Conte onde sua empresa está agora. A primeira conversa começa pelo problema que mais importa — com clareza sobre a prioridade, sem proposta genérica.</p><a class="button button-dark" href="https://wa.me/558487149954?text=Ol%C3%A1%2C%20quero%20solicitar%20um%20diagn%C3%B3stico%20comercial%20com%20a%20Valen." target="_blank" rel="noopener noreferrer" aria-label="Solicitar diagnóstico pelo WhatsApp, abre em nova aba">Iniciar conversa no WhatsApp <span aria-hidden="true">↗</span></a><small>Ou fale diretamente: <a href="tel:+558487149954">+55 84 8714-9954</a></small></div>
-      </div>
+      <div class="contact-sticky"><div class="container contact-grid">
+        <div class="contact-art" data-motion="contact" aria-label="Estátua ciborgue aponta para a próxima ação">
+          <img class="motion-poster" src="/assets/motion/contact/poster/poster.webp" width="900" height="900" alt="Estátua ciborgue aponta para o contato da Valen" loading="lazy" decoding="async">
+          <img class="statue-body" src="/assets/motion/contact/layers/corpo-fixo.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="statue-arm" src="/assets/motion/contact/layers/braco-05.webp" width="900" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async">
+        </div>
+        <div class="contact-right">
+          <p class="eyebrow"><span class="eyebrow-line"></span>Próxima ação</p>
+          <h2 id="contact-title" class="display">Seu próximo<br>movimento<br><em>começa aqui.</em></h2>
+          <p>Conte o que trava sua operação. Vamos identificar a prioridade e conversar sobre como avançar.</p>
+          <a class="button button-dark" href="https://wa.me/558487149954?text=Ol%C3%A1%2C%20quero%20solicitar%20um%20diagn%C3%B3stico%20comercial%20com%20a%20Valen." target="_blank" rel="noopener noreferrer" aria-label="Solicitar diagnóstico pelo WhatsApp, abre em nova aba">Iniciar conversa no WhatsApp <span aria-hidden="true">↗</span></a>
+          <small>Ou fale diretamente: <a href="tel:+558487149954">+55 84 8714-9954</a></small>
+        </div>
+      </div></div>
     </section>
   </main>
 

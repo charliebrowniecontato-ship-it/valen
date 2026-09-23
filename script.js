@@ -21,8 +21,9 @@ document.addEventListener('click', event => {
 });
 document.querySelector('#year').textContent = String(new Date().getFullYear());
 
-const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const revealTargets = document.querySelectorAll('.section-top, .intro-grid, .section-heading, .problem-list, .method-intro, .steps, .solutions-grid, .solution-bottom, .contact-grid');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const motionAllowed = !reducedMotion.matches;
+const revealTargets = document.querySelectorAll('.section-top, .intro-grid, .section-heading, .problem-list, .steps, .solutions-grid, .solution-bottom');
 if (motionAllowed && 'IntersectionObserver' in window) {
   revealTargets.forEach(el => {
     el.classList.add('reveal');
@@ -73,147 +74,128 @@ function activateSolution(card) { solutionCards.forEach(item => item.classList.t
 solutionCards.forEach(card => {
   card.addEventListener('pointerenter', () => activateSolution(card));
   card.addEventListener('click', () => activateSolution(card));
+  card.addEventListener('focusin', () => activateSolution(card));
 });
 solutionCards[1]?.classList.add('is-active');
 
-const art = document.querySelector('.hero-art');
-if (motionAllowed && window.matchMedia('(pointer:fine)').matches) {
-  art?.addEventListener('pointermove', event => {
-    const bounds = art.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - .5;
-    const y = (event.clientY - bounds.top) / bounds.height - .5;
-    art.style.setProperty('--pointer-x', `${(x * 16).toFixed(1)}px`);
-    art.style.setProperty('--pointer-y', `${(y * 12).toFixed(1)}px`);
-  });
-  art?.addEventListener('pointerleave', () => { art.style.setProperty('--pointer-x', '0px'); art.style.setProperty('--pointer-y', '0px'); });
-}
-
-// Motion frames are bundled locally; each scene keeps its poster until frames decode.
-if (motionAllowed && 'IntersectionObserver' in window) {
-  const scenes = [...document.querySelectorAll('.motion-scene[data-frames]')];
-  const sceneState = new Map();
-  const activeScenes = new Set();
-  const clamp = value => Math.min(1, Math.max(0, value));
-  const frameUrl = (name, frame) => `/assets/motion/${name}/frames/frame-${String(frame).padStart(2, '0')}.webp`;
-
-  function progressFor(element) {
-    const section = element.closest('section') || element;
-    if (section.id === 'inicio') return clamp(window.scrollY / Math.max(400, section.offsetHeight * .85));
-    const rect = section.getBoundingClientRect();
-    return clamp((window.innerHeight * .76 - rect.top) / (window.innerHeight * .62 + rect.height * .45));
-  }
-  function renderScene(scene, forcedFrame) {
-    const state = sceneState.get(scene);
-    if (!state?.ready) return;
-    const value = forcedFrame === undefined ? progressFor(scene) * (state.count - 1) : forcedFrame - 1;
-    const index = Math.min(state.count, Math.max(1, Math.floor(value) + 1));
-    const next = Math.min(state.count, index + 1);
-    const fraction = index === next ? 0 : value - Math.floor(value);
-    if (state.index !== index) { state.a.src = frameUrl(state.name, index); state.index = index; }
-    if (state.next !== next) { state.b.src = frameUrl(state.name, next); state.next = next; }
-    state.a.style.opacity = String(1 - fraction);
-    state.b.style.opacity = String(fraction);
-  }
-  async function prepareScene(scene) {
-    if (sceneState.has(scene)) return;
-    const name = scene.dataset.motion;
-    const count = Number(scene.dataset.frames);
-    const state = { name, count, ready: false, index: 0, next: 0 };
-    sceneState.set(scene, state);
-    const urls = Array.from({length: count}, (_, i) => frameUrl(name, i + 1));
-    try {
-      await Promise.all(urls.map(url => new Promise((resolve, reject) => {
-        const img = new Image(); img.onload = resolve; img.onerror = reject; img.src = url;
-      })));
-      if (!scene.isConnected) return;
-      state.a = document.createElement('img'); state.b = document.createElement('img');
-      for (const img of [state.a, state.b]) {
-        img.className = 'motion-frame'; img.alt = ''; img.setAttribute('aria-hidden', 'true');
-        img.width = 900; img.height = 900; scene.append(img);
-      }
-      state.ready = true;
-      renderScene(scene);
-      scene.classList.add('is-ready');
-    } catch { /* The poster remains visible if any frame fails to load. */ }
-  }
-  const visibility = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (entry.isIntersecting) { activeScenes.add(entry.target); prepareScene(entry.target); }
-    else activeScenes.delete(entry.target);
-  }), { rootMargin: '350px 0px' });
-  scenes.forEach(scene => visibility.observe(scene));
-
-  const plates = document.querySelector('.layers-story');
-  const plateArt = plates?.querySelector('.layers-art');
-  plateArt?.classList.add('is-ready');
+// One scroll clock, continuous transforms and a short, time-based catch-up.
+// No wheel interception, image swapping or continuously running idle loop.
+(() => {
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+  const root = document.documentElement;
+  const plateStory = document.querySelector('.layers-story');
+  const plateArt = document.querySelector('.layers-art');
+  const plates = [...document.querySelectorAll('.layer-plate')];
+  const labels = [...document.querySelectorAll('.layer-labels span')];
   const statue = document.querySelector('.contact-art');
-  const arm = statue?.querySelector('.statue-arm');
-  const nextArm = arm?.cloneNode();
-  if (nextArm) { nextArm.classList.add('statue-arm-next'); nextArm.alt = ''; statue.append(nextArm); }
-  const contactArms = Array.from({length:5},(_,i)=>`/assets/motion/contact/layers/braco-${String(i+1).padStart(2,'0')}.webp`);
-  const armImages = contactArms.map(src => { const img = new Image(); img.src = src; return img; });
-  let currentArm = 1;
-  let followingArm = 0;
-  statue?.classList.add('is-ready');
-
-  let sceneQueued = false;
-  function animateScroll() {
-    sceneQueued = false;
-    for (const scene of activeScenes) {
-      if (scene.dataset.motion !== 'solutions' || !scene.dataset.hoverFrame) renderScene(scene);
-    }
-    if (plates && plateArt) {
-      const rect = plates.getBoundingClientRect();
-      const p = clamp((window.innerHeight * .75 - rect.top) / (window.innerHeight * .55 + rect.height * .35));
-      plateArt.style.setProperty('--stack', p.toFixed(3));
-    }
-    if (statue && arm) {
-      const rect = statue.closest('section').getBoundingClientRect();
-      const p = clamp((window.innerHeight * .76 - rect.top) / (window.innerHeight * .55 + rect.height * .5));
-      const enter = clamp(p / .24);
-      const exit = clamp((p - .82) / .18);
-      statue.style.setProperty('--enter', enter.toFixed(3));
-      statue.style.setProperty('--exit', exit.toFixed(3));
-      statue.style.opacity = String(enter * (1 - exit));
-      const value = p * 4;
-      const step = Math.min(5, Math.max(1, Math.floor(value) + 1));
-      const next = Math.min(5, step + 1);
-      const blend = step === next ? 0 : value - Math.floor(value);
-      if (step !== currentArm && armImages[step - 1].complete) { arm.src = contactArms[step - 1]; currentArm = step; }
-      if (nextArm && next !== followingArm && armImages[next - 1].complete) { nextArm.src = contactArms[next - 1]; followingArm = next; }
-      arm.style.opacity = String(1 - blend);
-      if (nextArm) nextArm.style.opacity = String(blend);
-    }
-  }
-  window.addEventListener('scroll', () => {
-    if (sceneQueued) return;
-    sceneQueued = true;
-    requestAnimationFrame(animateScroll);
-  }, { passive:true });
-  window.addEventListener('resize', () => requestAnimationFrame(animateScroll), { passive:true });
-  animateScroll();
-
-  const solutionScene = document.querySelector('.solutions-art');
-  const highlight = solutionScene?.querySelector('.solution-highlight');
-  const hoverNames = ['marketing','vendas','tecnologia'];
-  solutionCards.forEach((card, i) => {
-    const activate = () => {
-      solutionScene.dataset.hoverFrame = String(i + 2);
-      renderScene(solutionScene, i + 2);
-      if (highlight) highlight.src = `/assets/motion/solutions/layers/hover-${hoverNames[i]}.webp`;
+  const arm = document.querySelector('.statue-arm');
+  const contact = document.querySelector('.contact');
+  const hero = document.querySelector('.hero-art');
+  const orbit = hero?.querySelector('.hero-orbit');
+  const symbol = hero?.querySelector('.hero-v');
+  const method = document.querySelector('.method-art .motion-poster');
+  const problem = document.querySelector('.problem-art .motion-poster');
+  const network = document.querySelector('.solutions-art .motion-poster');
+  const highlight = document.querySelector('.solution-highlight');
+  const desktop = matchMedia('(min-width:901px) and (min-height:650px)');
+  let pointer = {x:0,y:0}, smoothPointer = {x:0,y:0};
+  let y = scrollY, target = scrollY, frame = 0, lastTime = 0;
+  let geometry = {};
+  const measure = el => ({top:el.getBoundingClientRect().top + scrollY,height:el.offsetHeight});
+  const traverse = (g, viewport = .8) => clamp((y + innerHeight * viewport - g.top) / (g.height + innerHeight * .5));
+  const pinProgress = g => clamp((y - g.top + 88) / Math.max(1,g.height - innerHeight + 88));
+  function measureAll() {
+    geometry = {
+      plates:measure(plateStory),contact:measure(contact),hero:measure(document.querySelector('.hero')),
+      method:measure(document.querySelector('.method')),problem:measure(document.querySelector('.problem-stage')),
+      network:measure(document.querySelector('.solutions-showcase'))
     };
-    card.addEventListener('pointerenter', activate);
-    card.addEventListener('focusin', activate);
-    card.addEventListener('click', activate);
-    card.addEventListener('pointerleave', () => { delete solutionScene.dataset.hoverFrame; renderScene(solutionScene); });
-  });
-  const pointerDepth = (element, target, scale) => {
-    element?.addEventListener('pointermove', event => {
-      if (!window.matchMedia('(pointer:fine)').matches) return;
-      const bounds = element.getBoundingClientRect();
-      target.style.setProperty('--depth-x', `${(((event.clientX - bounds.left) / bounds.width - .5) * scale).toFixed(1)}px`);
-      target.style.setProperty('--depth-y', `${(((event.clientY - bounds.top) / bounds.height - .5) * scale).toFixed(1)}px`);
+    wake();
+  }
+  async function ready(el, images) {
+    try {
+      await Promise.all(images.map(async img => {
+        if (img.loading === 'lazy') img.loading = 'eager';
+        await img.decode();
+      }));
+      el.classList.add('is-ready');
+      wake();
+    } catch { /* A complete poster stays visible if a layer cannot load. */ }
+  }
+  const loader = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    ready(el,[...el.querySelectorAll('.layer-plate,.statue-body,.statue-arm')]);
+    loader.unobserve(el);
+  }),{rootMargin:'500px'});
+  loader.observe(plateArt);loader.observe(statue);
+  function paint() {
+    const p = desktop.matches ? pinProgress(geometry.plates) : traverse(geometry.plates);
+    const assemble = ease((p - .08) / .78);
+    plateStory.style.setProperty('--scene-p', p.toFixed(4));
+    // Every plate's painted pixels fit inside 10–89% of this square.
+    // Source canvases have 63% transparent space below the plate.
+    const positions = [54 - 12 * assemble,32 + 2 * assemble,10 + 16 * assemble];
+    plates.forEach((el,i) => {
+      const spread = 1 - assemble;
+      const dx = (i - 1) * 8 * spread + smoothPointer.x * (3-i);
+      el.style.transform = `translate3d(${dx}%,${positions[i]}%,0) rotate(${(i-1)*5*spread}deg)`;
     });
-    element?.addEventListener('pointerleave', () => { target.style.setProperty('--depth-x', '0px'); target.style.setProperty('--depth-y', '0px'); });
+    labels.forEach((el,i) => {el.style.top = `${positions[2-i]+12}%`;el.style.opacity = String(.55+.45*assemble);});
+    const cp = desktop.matches ? pinProgress(geometry.contact) : traverse(geometry.contact);
+    const entry = desktop.matches ? ease((y + innerHeight - geometry.contact.top)/(innerHeight*.85)) : 1;
+    const lift = ease((cp-.04)/.58);
+    const exit = desktop.matches ? ease((cp-.88)/.12) : 0;
+    statue.style.transform = `translate3d(${(-12*(1-entry)+7*exit).toFixed(3)}%,${(10*(1-entry)+14*exit).toFixed(3)}%,0) rotate(${(-3*(1-entry)).toFixed(3)}deg)`;
+    statue.style.opacity = String(1 - exit*.5);
+    arm.style.transform = `rotate(${(48*(1-lift)-2*lift).toFixed(3)}deg)`;
+    contact.style.setProperty('--gesture',lift.toFixed(4));
+    const hp = clamp(y / geometry.hero.height);
+    orbit.style.transform = `translate3d(${smoothPointer.x*6}px,${hp*75+smoothPointer.y*4}px,0) rotate(${hp*70-12}deg) scale(${1-hp*.08})`;
+    symbol.style.transform = `translate3d(${smoothPointer.x*14}px,${-hp*65+smoothPointer.y*10}px,0) rotate(${hp*-9}deg)`;
+    const mp = traverse(geometry.method);
+    method.style.transform = `rotate(${-28+mp*145}deg) scale(${.9+.1*Math.sin(mp*Math.PI)})`;
+    const pp = traverse(geometry.problem);
+    problem.style.transform = `translate3d(0,${30-pp*60}px,0) rotate(${-8+pp*16}deg)`;
+    const np = traverse(geometry.network);
+    network.style.transform = `rotate(${-12+np*24}deg) scale(${.88+np*.12})`;
+    highlight.style.transform = network.style.transform;
+  }
+  function tick(time) {
+    frame = 0;
+    if (reducedMotion.matches || document.hidden) return;
+    const dt = lastTime ? Math.min(time-lastTime,50) : 16.7;
+    lastTime = time;
+    const alpha = 1-Math.exp(-dt/65);
+    y += (target-y)*alpha;
+    smoothPointer.x += (pointer.x-smoothPointer.x)*alpha;
+    smoothPointer.y += (pointer.y-smoothPointer.y)*alpha;
+    paint();
+    if (Math.abs(target-y)>.1 || Math.abs(pointer.x-smoothPointer.x)>.002 || Math.abs(pointer.y-smoothPointer.y)>.002) frame=requestAnimationFrame(tick);
+    else lastTime=0;
+  }
+  function wake() { if(!frame && !reducedMotion.matches && !document.hidden) frame=requestAnimationFrame(tick); }
+  const updatePreference = () => {
+    root.classList.toggle('motion-enabled',!reducedMotion.matches);
+    if(reducedMotion.matches){cancelAnimationFrame(frame);frame=0;lastTime=0;}
+    target=y=scrollY; measureAll();
   };
-  if (plateArt) pointerDepth(plateArt, plateArt, 12);
-}
+  window.addEventListener('scroll',()=>{target=scrollY;wake();},{passive:true});
+  window.addEventListener('resize',measureAll,{passive:true});
+  window.addEventListener('load',measureAll,{once:true});
+  document.addEventListener('visibilitychange',()=>{target=y=scrollY;wake();});
+  reducedMotion.addEventListener('change',updatePreference);
+  desktop.addEventListener('change',measureAll);
+  hero.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse')return;
+    const b=hero.getBoundingClientRect();pointer={x:(e.clientX-b.left)/b.width-.5,y:(e.clientY-b.top)/b.height-.5};wake();
+  });
+  hero.addEventListener('pointerleave',()=>{pointer={x:0,y:0};wake();});
+  const hoverNames=['marketing','vendas','tecnologia'];
+  solutionCards.forEach((card,i)=>{
+    const choose=()=>{highlight.src=`/assets/motion/solutions/layers/hover-${hoverNames[i]}.webp`;};
+    card.addEventListener('pointerenter',choose);card.addEventListener('focusin',choose);card.addEventListener('click',choose);
+  });
+  updatePreference();
+})();
