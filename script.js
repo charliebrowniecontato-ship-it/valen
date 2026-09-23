@@ -84,3 +84,119 @@ if (motionAllowed && window.matchMedia('(pointer:fine)').matches) {
   });
   art?.addEventListener('pointerleave', () => { art.style.setProperty('--pointer-x', '0px'); art.style.setProperty('--pointer-y', '0px'); });
 }
+
+// Motion frames are bundled locally; each scene keeps its poster until frames decode.
+if (motionAllowed && 'IntersectionObserver' in window) {
+  const scenes = [...document.querySelectorAll('.motion-scene[data-frames]')];
+  const sceneState = new Map();
+  const activeScenes = new Set();
+  const clamp = value => Math.min(1, Math.max(0, value));
+  const frameUrl = (name, frame) => `/assets/motion/${name}/frames/frame-${String(frame).padStart(2, '0')}.webp`;
+
+  function progressFor(element) {
+    const section = element.closest('section') || element;
+    if (section.id === 'inicio') return clamp(window.scrollY / Math.max(400, section.offsetHeight * .85));
+    const rect = section.getBoundingClientRect();
+    return clamp((window.innerHeight * .76 - rect.top) / (window.innerHeight * .62 + rect.height * .45));
+  }
+  function renderScene(scene, forcedFrame) {
+    const state = sceneState.get(scene);
+    if (!state?.ready) return;
+    const value = forcedFrame === undefined ? progressFor(scene) * (state.count - 1) : forcedFrame - 1;
+    const index = Math.min(state.count, Math.max(1, Math.floor(value) + 1));
+    const next = Math.min(state.count, index + 1);
+    const fraction = index === next ? 0 : value - Math.floor(value);
+    if (state.index !== index) { state.a.src = frameUrl(state.name, index); state.index = index; }
+    if (state.next !== next) { state.b.src = frameUrl(state.name, next); state.next = next; }
+    state.a.style.opacity = String(1 - fraction);
+    state.b.style.opacity = String(fraction);
+  }
+  async function prepareScene(scene) {
+    if (sceneState.has(scene)) return;
+    const name = scene.dataset.motion;
+    const count = Number(scene.dataset.frames);
+    const state = { name, count, ready: false, index: 0, next: 0 };
+    sceneState.set(scene, state);
+    const urls = Array.from({length: count}, (_, i) => frameUrl(name, i + 1));
+    try {
+      await Promise.all(urls.map(url => new Promise((resolve, reject) => {
+        const img = new Image(); img.onload = resolve; img.onerror = reject; img.src = url;
+      })));
+      if (!scene.isConnected) return;
+      state.a = document.createElement('img'); state.b = document.createElement('img');
+      for (const img of [state.a, state.b]) {
+        img.className = 'motion-frame'; img.alt = ''; img.setAttribute('aria-hidden', 'true');
+        img.width = 900; img.height = 900; scene.append(img);
+      }
+      state.ready = true;
+      renderScene(scene);
+      scene.classList.add('is-ready');
+    } catch { /* The poster remains visible if any frame fails to load. */ }
+  }
+  const visibility = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { activeScenes.add(entry.target); prepareScene(entry.target); }
+    else activeScenes.delete(entry.target);
+  }), { rootMargin: '350px 0px' });
+  scenes.forEach(scene => visibility.observe(scene));
+
+  const plates = document.querySelector('.layers-story');
+  const plateArt = plates?.querySelector('.layers-art');
+  plateArt?.classList.add('is-ready');
+  const statue = document.querySelector('.contact-art');
+  const arm = statue?.querySelector('.statue-arm');
+  const contactArms = Array.from({length:5},(_,i)=>`/assets/motion/contact/layers/braco-${String(i+1).padStart(2,'0')}.webp`);
+  const armImages = contactArms.map(src => { const img = new Image(); img.src = src; return img; });
+  let currentArm = 1;
+  statue?.classList.add('is-ready');
+
+  let sceneQueued = false;
+  function animateScroll() {
+    sceneQueued = false;
+    for (const scene of activeScenes) {
+      if (scene.dataset.motion !== 'solutions' || !scene.dataset.hoverFrame) renderScene(scene);
+    }
+    if (plates && plateArt) {
+      const rect = plates.getBoundingClientRect();
+      const p = clamp((window.innerHeight * .75 - rect.top) / (window.innerHeight * .55 + rect.height * .35));
+      plateArt.style.setProperty('--stack', p.toFixed(3));
+    }
+    if (statue && arm) {
+      const rect = statue.closest('section').getBoundingClientRect();
+      const p = clamp((window.innerHeight * .75 - rect.top) / (window.innerHeight * .5 + rect.height * .5));
+      const step = Math.min(5, Math.max(1, Math.round(p * 4) + 1));
+      if (step !== currentArm && armImages[step - 1].complete) { arm.src = contactArms[step - 1]; currentArm = step; }
+    }
+  }
+  window.addEventListener('scroll', () => {
+    if (sceneQueued) return;
+    sceneQueued = true;
+    requestAnimationFrame(animateScroll);
+  }, { passive:true });
+  window.addEventListener('resize', () => requestAnimationFrame(animateScroll), { passive:true });
+  animateScroll();
+
+  const solutionScene = document.querySelector('.solutions-art');
+  const highlight = solutionScene?.querySelector('.solution-highlight');
+  const hoverNames = ['marketing','vendas','tecnologia'];
+  solutionCards.forEach((card, i) => {
+    const activate = () => {
+      solutionScene.dataset.hoverFrame = String(i + 2);
+      renderScene(solutionScene, i + 2);
+      if (highlight) highlight.src = `/assets/motion/solutions/layers/hover-${hoverNames[i]}.webp`;
+    };
+    card.addEventListener('pointerenter', activate);
+    card.addEventListener('focusin', activate);
+    card.addEventListener('click', activate);
+    card.addEventListener('pointerleave', () => { delete solutionScene.dataset.hoverFrame; renderScene(solutionScene); });
+  });
+  const pointerDepth = (element, target, scale) => {
+    element?.addEventListener('pointermove', event => {
+      if (!window.matchMedia('(pointer:fine)').matches) return;
+      const bounds = element.getBoundingClientRect();
+      target.style.setProperty('--depth-x', `${(((event.clientX - bounds.left) / bounds.width - .5) * scale).toFixed(1)}px`);
+      target.style.setProperty('--depth-y', `${(((event.clientY - bounds.top) / bounds.height - .5) * scale).toFixed(1)}px`);
+    });
+    element?.addEventListener('pointerleave', () => { target.style.setProperty('--depth-x', '0px'); target.style.setProperty('--depth-y', '0px'); });
+  };
+  if (plateArt) pointerDepth(plateArt, plateArt, 12);
+}
