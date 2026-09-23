@@ -38,6 +38,7 @@ if (motionAllowed && 'IntersectionObserver' in window) {
 
 const header = document.querySelector('.site-header');
 const navLinks = document.querySelectorAll('.nav a[href^="#"]');
+const railLinks = document.querySelectorAll('.chapter-rail a[href^="#"]');
 const sections = document.querySelectorAll('main section[id]');
 if ('IntersectionObserver' in window) {
   const current = new IntersectionObserver(entries => {
@@ -45,6 +46,8 @@ if ('IntersectionObserver' in window) {
       if (!entry.isIntersecting) return;
       navLinks.forEach(link => link.removeAttribute('aria-current'));
       document.querySelector(`.nav a[href="#${entry.target.id}"]`)?.setAttribute('aria-current', 'location');
+      railLinks.forEach(link => link.removeAttribute('aria-current'));
+      document.querySelector(`.chapter-rail a[href="#${entry.target.id}"]`)?.setAttribute('aria-current', 'location');
     });
   }, { rootMargin: '-25% 0px -60% 0px' });
   sections.forEach(section => current.observe(section));
@@ -144,9 +147,12 @@ if (motionAllowed && 'IntersectionObserver' in window) {
   plateArt?.classList.add('is-ready');
   const statue = document.querySelector('.contact-art');
   const arm = statue?.querySelector('.statue-arm');
+  const nextArm = arm?.cloneNode();
+  if (nextArm) { nextArm.classList.add('statue-arm-next'); nextArm.alt = ''; statue.append(nextArm); }
   const contactArms = Array.from({length:5},(_,i)=>`/assets/motion/contact/layers/braco-${String(i+1).padStart(2,'0')}.webp`);
   const armImages = contactArms.map(src => { const img = new Image(); img.src = src; return img; });
   let currentArm = 1;
+  let followingArm = 0;
   statue?.classList.add('is-ready');
 
   let sceneQueued = false;
@@ -162,9 +168,20 @@ if (motionAllowed && 'IntersectionObserver' in window) {
     }
     if (statue && arm) {
       const rect = statue.closest('section').getBoundingClientRect();
-      const p = clamp((window.innerHeight * .75 - rect.top) / (window.innerHeight * .5 + rect.height * .5));
-      const step = Math.min(5, Math.max(1, Math.round(p * 4) + 1));
+      const p = clamp((window.innerHeight * .76 - rect.top) / (window.innerHeight * .55 + rect.height * .5));
+      const enter = clamp(p / .24);
+      const exit = clamp((p - .82) / .18);
+      statue.style.setProperty('--enter', enter.toFixed(3));
+      statue.style.setProperty('--exit', exit.toFixed(3));
+      statue.style.opacity = String(enter * (1 - exit));
+      const value = p * 4;
+      const step = Math.min(5, Math.max(1, Math.floor(value) + 1));
+      const next = Math.min(5, step + 1);
+      const blend = step === next ? 0 : value - Math.floor(value);
       if (step !== currentArm && armImages[step - 1].complete) { arm.src = contactArms[step - 1]; currentArm = step; }
+      if (nextArm && next !== followingArm && armImages[next - 1].complete) { nextArm.src = contactArms[next - 1]; followingArm = next; }
+      arm.style.opacity = String(1 - blend);
+      if (nextArm) nextArm.style.opacity = String(blend);
     }
   }
   window.addEventListener('scroll', () => {
