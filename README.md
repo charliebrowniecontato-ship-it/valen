@@ -12,4 +12,4 @@ Usa a logo oficial `assets/valen-logo-final.png` nos dois pontos de assinatura. 
 
 ## SEO
 
-Canonical, Open Graph, Twitter Card, JSON-LD, `robots.txt` e `sitemap.xml` apontam para `https://valen.jvmco.com.br/`. Conecte esse domínio ao projeto Vercel antes de considerar a migração finalizada; se usar outro domínio definitivo, substitua essa URL nos quatro arquivos relevantes. Não anuncie URLs temporárias de deploy como canônicas.
+Canonical, Open Graph, Twitter Card, JSON-LD, `robots.txt` e `sitemap.xml` apontam para `https://valen-eta-nine.vercel.app/`, informado como endereço atual. Se um domínio próprio passar a ser o principal, atualize todas essas referências e configure o redirecionamento antes de indexá-lo.
