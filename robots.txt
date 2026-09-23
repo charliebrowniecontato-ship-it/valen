@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://valen.jvmco.com.br/sitemap.xml
