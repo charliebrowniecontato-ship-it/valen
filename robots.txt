@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://valen.jvmco.com.br/sitemap.xml
+Sitemap: https://valen-eta-nine.vercel.app/sitemap.xml
