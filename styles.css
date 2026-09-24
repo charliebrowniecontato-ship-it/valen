@@ -186,3 +186,304 @@
   .contact{height:175vh}
   .contact-sticky{position:sticky;top:88px;height:calc(100vh - 102px)}
 }
+
+
+
+/* ===== VALEN 2026 — UI/UX + ATLAS SCROLL REFINEMENT ===== */
+:root{
+  --motion-ease:cubic-bezier(.16,1,.3,1);
+  --motion-soft:cubic-bezier(.22,.61,.36,1);
+}
+html{scroll-padding-top:110px}
+body{font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.accent,.hero-bottom p{text-wrap:balance}
+p{overflow-wrap:break-word}
+a,button{touch-action:manipulation}
+a:focus-visible,button:focus-visible,summary:focus-visible{
+  outline:2px solid #79dfff;outline-offset:4px;border-radius:8px
+}
+.button,.header-cta,.text-link{min-height:44px}
+.site-header nav a{min-height:42px;display:inline-flex;align-items:center}
+section[id],#solucoes{scroll-margin-top:105px}
+img{user-select:none;-webkit-user-drag:none}
+
+/* Real scroll-scrub image sequences */
+.scrub-sequence{
+  position:relative;
+  aspect-ratio:1;
+  contain:layout paint;
+  isolation:isolate;
+}
+.scrub-frame{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  opacity:0;
+  transform:translateZ(0);
+  will-change:opacity,transform;
+  pointer-events:none;
+}
+.scrub-frame:first-child{opacity:1}
+
+/* Hero: sequence is the main motion layer; original Valen pieces add depth */
+.hero-stage{overflow:visible}
+.hero-sequence{
+  position:absolute;
+  width:min(50vw,690px);
+  right:2%;
+  top:50%;
+  transform:translate3d(0,-50%,0);
+  z-index:2;
+  filter:drop-shadow(0 35px 95px rgba(0,119,255,.2));
+}
+.hero-drive-orbit{
+  position:absolute;
+  width:min(62vw,860px);
+  height:auto;
+  right:-5%;
+  top:50%;
+  transform:translate3d(0,-50%,0) scale(1.03);
+  opacity:.22;
+  mix-blend-mode:screen;
+  filter:blur(.25px) saturate(1.25) drop-shadow(0 0 75px rgba(0,209,255,.18));
+  z-index:1;
+  will-change:transform,opacity;
+}
+.hero-stage .hero-orbit{opacity:.22!important;z-index:3}
+.hero-stage .hero-v{opacity:.18!important;z-index:4}
+.hero-content{will-change:transform,opacity}
+.hero h1{max-width:970px}
+.hero-bottom p{max-width:560px}
+
+/* make the long desktop storytelling closer to Atlas */
+@media(min-width:901px) and (min-height:721px){
+  .hero{height:112vh;min-height:820px}
+  .layers-story{height:190vh}
+  .layers-sticky{position:sticky;top:92px;height:calc(100vh - 110px)}
+  .contact{height:180vh}
+  .contact-sticky{position:sticky;top:92px;height:calc(100vh - 110px)}
+  .method-visual{position:sticky;top:140px}
+}
+
+/* solutions animated network */
+.solutions{position:relative;isolation:isolate}
+.solutions-motion{
+  position:absolute;
+  width:min(43vw,590px);
+  right:-2%;
+  top:-45px;
+  z-index:0;
+  opacity:.22;
+  pointer-events:none;
+  filter:saturate(1.12);
+}
+.solutions>.section-line,.solutions-grid{position:relative;z-index:2}
+.solution-card{
+  transform-origin:50% 100%;
+  will-change:transform,opacity;
+  box-shadow:0 0 0 1px rgba(255,255,255,.02);
+}
+.card-art{will-change:transform,opacity}
+
+/* Differentials: use newly added official visual asset as atmospheric art */
+.difference .wrap{position:relative;isolation:isolate}
+.difference-bust{
+  position:absolute;
+  width:min(40vw,570px);
+  right:-8%;
+  top:12%;
+  opacity:.08;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  z-index:0;
+  will-change:transform,opacity;
+}
+.difference .split-heading,.difference-tabs{position:relative;z-index:1}
+
+/* Numbers gains a second Valen-owned asset without replacing the Atlas-like layout */
+.numbers-art{position:relative;overflow:visible}
+.numbers-thinker{
+  position:absolute;
+  width:58%;
+  right:-3%;
+  bottom:-5%;
+  opacity:.32;
+  mix-blend-mode:screen;
+  filter:saturate(.9) contrast(1.08);
+  pointer-events:none;
+  will-change:transform,opacity;
+}
+.network-art{will-change:transform,opacity}
+
+/* method sequence */
+.method-sequence{
+  width:min(100%,560px);
+  margin:auto;
+  filter:drop-shadow(0 28px 65px rgba(0,85,255,.14));
+}
+.method-visual>span{z-index:3}
+.steps li{will-change:transform,opacity}
+
+/* Challenges has a dedicated Valen network/pulse scene */
+.challenge-motion{
+  position:relative;
+  width:min(52vw,680px);
+  height:260px;
+  margin:-10px 0 -115px auto;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+.problem-sequence{
+  position:absolute;
+  width:430px;
+  right:3%;
+  top:-95px;
+  opacity:.48;
+}
+.challenge-pulse{
+  position:absolute;
+  width:360px;
+  height:360px;
+  object-fit:contain;
+  right:18%;
+  top:-115px;
+  opacity:.18;
+  mix-blend-mode:screen;
+  filter:blur(.2px);
+  will-change:transform,opacity;
+}
+.challenge-grid{position:relative;z-index:2}
+
+/* Contact: arm is now an actual scroll sequence */
+.contact-arm-sequence{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  aspect-ratio:auto;
+  z-index:4;
+}
+.statue-body{z-index:3}
+.statue-poster{z-index:1}
+.contact-art{will-change:transform}
+.contact-copy{will-change:transform,opacity}
+
+/* scroll-driven section staging */
+@media(prefers-reduced-motion:no-preference){
+  .overview,.solutions,.difference,.numbers,.method,.ecosystem,.challenges,.contact,.faq{
+    --scene:0;
+    --scene-in:0;
+  }
+  .overview-top{
+    transform:translate3d(0,calc((1 - var(--scene-in))*72px),0);
+    opacity:calc(.12 + var(--scene-in)*.88)
+  }
+  .layer-copy{
+    transform:translate3d(calc((1 - var(--scene))*52px),0,0);
+    opacity:calc(.18 + var(--scene)*.82)
+  }
+  .solutions .section-line{
+    transform:translate3d(0,calc((1 - var(--scene-in))*58px),0);
+    opacity:calc(.12 + var(--scene-in)*.88)
+  }
+  .solution-card{
+    transform:translate3d(0,calc((1 - var(--scene))*120px),0) scale(calc(.965 + var(--scene)*.035));
+    opacity:calc(.1 + var(--scene)*.9)
+  }
+  .solution-card:nth-child(2){transform:translate3d(0,calc((1 - var(--scene))*165px),0) scale(calc(.96 + var(--scene)*.04))}
+  .solution-card:nth-child(3){transform:translate3d(0,calc((1 - var(--scene))*210px),0) scale(calc(.955 + var(--scene)*.045))}
+  .difference .split-heading{
+    transform:translate3d(0,calc((1 - var(--scene-in))*62px),0);
+    opacity:calc(.12 + var(--scene-in)*.88)
+  }
+  .difference-tabs{
+    transform:translate3d(0,calc((1 - var(--scene))*74px),0);
+    opacity:calc(.14 + var(--scene)*.86)
+  }
+  .numbers-grid{
+    transform:translate3d(0,calc((1 - var(--scene-in))*68px),0);
+    opacity:calc(.12 + var(--scene-in)*.88)
+  }
+  .big-statement{
+    transform:translate3d(calc((1 - var(--scene))*-9vw),0,0);
+    opacity:calc(.08 + var(--scene)*.92)
+  }
+  .method .split-heading{
+    transform:translate3d(0,calc((1 - var(--scene-in))*62px),0);
+    opacity:calc(.12 + var(--scene-in)*.88)
+  }
+  .steps li{
+    transform:translate3d(calc((1 - var(--scene))*55px),0,0);
+    opacity:calc(.08 + var(--scene)*.92)
+  }
+  .steps li:nth-child(2){transform:translate3d(calc((1 - var(--scene))*75px),0,0)}
+  .steps li:nth-child(3){transform:translate3d(calc((1 - var(--scene))*95px),0,0)}
+  .steps li:nth-child(4){transform:translate3d(calc((1 - var(--scene))*115px),0,0)}
+  .steps li:nth-child(5){transform:translate3d(calc((1 - var(--scene))*135px),0,0)}
+  .ecosystem-grid>div:first-child{
+    transform:translate3d(calc((1 - var(--scene))*-62px),0,0);
+    opacity:calc(.12 + var(--scene)*.88)
+  }
+  .capability{
+    transform:translate3d(0,calc((1 - var(--scene))*82px),0) scale(calc(.96 + var(--scene)*.04));
+    opacity:calc(.08 + var(--scene)*.92)
+  }
+  .challenge-card{
+    transform:translate3d(0,calc((1 - var(--scene))*95px),0);
+    opacity:calc(.08 + var(--scene)*.92)
+  }
+  .challenge-card:nth-child(2){transform:translate3d(0,calc((1 - var(--scene))*135px),0)}
+  .challenge-card:nth-child(3){transform:translate3d(0,calc((1 - var(--scene))*175px),0)}
+  .contact-card{
+    transform:scale(calc(.955 + var(--scene)*.045));
+    border-radius:calc(42px - var(--scene)*12px)
+  }
+  .contact-copy{
+    transform:translate3d(calc((1 - var(--scene))*62px),0,0);
+    opacity:calc(.15 + var(--scene)*.85)
+  }
+  .faq .section-line{
+    transform:translate3d(0,calc((1 - var(--scene-in))*55px),0);
+    opacity:calc(.14 + var(--scene-in)*.86)
+  }
+  .faq details{
+    transform:translate3d(0,calc((1 - var(--scene))*32px),0);
+    opacity:calc(.18 + var(--scene)*.82)
+  }
+}
+
+/* mobile: preserve motion feel but prioritize clarity, performance and touch */
+@media(max-width:900px){
+  .hero-sequence{width:min(92vw,590px);right:-17%;top:31%}
+  .hero-drive-orbit{width:115vw;right:-35%;top:31%;opacity:.14}
+  .hero-stage .hero-orbit,.hero-stage .hero-v{opacity:.1!important}
+  .solutions-motion{width:72vw;right:-26%;top:40px;opacity:.12}
+  .difference-bust{width:78vw;right:-42%;top:17%;opacity:.06}
+  .numbers-thinker{width:67%;right:-12%;opacity:.2}
+  .challenge-motion{width:100%;height:180px;margin:0 0 -70px}
+  .problem-sequence{width:300px;right:-60px;top:-75px}
+  .challenge-pulse{width:260px;height:260px;right:5%;top:-80px}
+}
+@media(max-width:620px){
+  .hero-sequence{width:104vw;right:-27%;top:30%}
+  .hero-drive-orbit{width:125vw;right:-38%;top:30%}
+  .solutions-motion{display:none}
+  .difference-bust{display:none}
+  .numbers-thinker{width:75%;opacity:.14}
+  .challenge-motion{height:145px;margin-bottom:-52px}
+  .problem-sequence{width:260px;right:-75px}
+  .contact-arm-sequence{display:none}
+}
+
+/* fallback and accessibility */
+@media(prefers-reduced-motion:reduce){
+  .scrub-frame{display:none!important}
+  .scrub-frame:first-child{display:block!important;opacity:1!important}
+  .hero-drive-orbit,.difference-bust,.numbers-thinker,.challenge-pulse{transform:none!important}
+  .overview-top,.layer-copy,.solutions .section-line,.solution-card,.difference .split-heading,.difference-tabs,.numbers-grid,.big-statement,.method .split-heading,.steps li,.ecosystem-grid>div:first-child,.capability,.challenge-card,.contact-card,.contact-copy,.faq .section-line,.faq details{
+    transform:none!important;opacity:1!important
+  }
+}
