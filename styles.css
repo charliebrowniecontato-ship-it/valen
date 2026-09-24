@@ -525,3 +525,169 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid #00
  .hero h1{font-size:clamp(52px,12.5vw,72px);line-height:.92}
  .hero-bottom p{font-size:16px}
 }
+
+
+/* === PRODUCTION POLISH 2026-09-24 === */
+:root{
+  --content-max:1380px;
+  --text:#f4f8ff;
+  --muted-readable:#aebbd0;
+  --card-radius:24px;
+}
+.wrap{max-width:var(--content-max)}
+body{overflow-x:hidden}
+h1,h2,h3{font-kerning:normal;text-wrap:balance}
+.hero h1{
+  font-size:clamp(58px,7.25vw,122px)!important;
+  line-height:.88!important;
+  letter-spacing:-.055em!important;
+  max-width:1040px!important;
+}
+.hero-bottom{
+  align-items:center;
+  gap:clamp(22px,3vw,54px);
+}
+.hero-bottom p{
+  max-width:560px!important;
+  font-size:clamp(16px,1.25vw,19px);
+  line-height:1.48!important;
+  color:var(--text);
+}
+.hero-bottom p span{color:#aebbd0}
+.overview-top h2,
+.split-heading h2,
+.numbers h2,
+.ecosystem h2,
+.challenges h2,
+.faq h2{
+  font-size:clamp(46px,5.35vw,88px)!important;
+  line-height:.92!important;
+  letter-spacing:-.045em!important;
+}
+.section-line h3{
+  font-size:clamp(38px,4.25vw,70px)!important;
+  line-height:.94!important;
+  letter-spacing:-.04em!important;
+}
+.layer-copy h3{
+  font-size:clamp(45px,4.8vw,78px)!important;
+  line-height:.9!important;
+}
+.solution-card{
+  border-radius:var(--card-radius)!important;
+  padding:clamp(22px,2vw,30px)!important;
+  min-height:clamp(500px,42vw,640px);
+}
+.solution-card h3{
+  font-size:clamp(29px,2.55vw,42px)!important;
+  line-height:.98!important;
+  letter-spacing:-.035em!important;
+  max-width:14ch;
+}
+.solution-card>p{font-size:15px;line-height:1.55!important;max-width:42ch}
+.card-index,.eyebrow,.section-chip{letter-spacing:.09em}
+.tags{gap:8px;flex-wrap:wrap}
+.tags span{min-height:30px;display:inline-flex;align-items:center}
+.button,.header-cta{
+  border-radius:999px!important;
+  padding-left:20px!important;
+  padding-right:18px!important;
+  gap:18px;
+  white-space:nowrap;
+}
+.button span,.header-cta span{
+  display:inline-grid;
+  place-items:center;
+  width:24px;height:24px;
+  border-radius:50%;
+  border:1px solid currentColor;
+  font-size:12px;
+  line-height:1;
+}
+.site-header{
+  max-width:calc(100vw - 36px);
+  margin-inline:auto;
+}
+.site-header nav{gap:clamp(16px,1.8vw,30px)}
+.site-header nav a{white-space:nowrap}
+.difference-tabs{align-items:stretch}
+.tab-list button{
+  min-height:78px;
+  border-radius:14px;
+  padding-inline:18px!important;
+}
+.tab-list button>span{font-size:clamp(18px,1.6vw,24px)!important;line-height:1.05}
+.tab-panels{border-radius:24px;overflow:hidden}
+.panel-copy h3{font-size:clamp(34px,3.4vw,54px)!important;line-height:.96}
+.panel-copy p{max-width:48ch}
+.stat-pair strong{font-size:clamp(70px,7vw,112px)!important}
+.steps li{min-height:112px}
+.steps h3{font-size:clamp(28px,2.6vw,42px)!important}
+.capability{
+  border-radius:18px;
+  min-height:118px;
+}
+.capability h3{font-size:clamp(19px,1.6vw,26px)!important}
+.challenge-card{border-radius:24px!important}
+.challenge-card h3{font-size:clamp(31px,3vw,48px)!important;line-height:.98}
+.contact-card{border-radius:30px}
+.contact-copy h2{font-size:clamp(48px,5.7vw,92px)!important;line-height:.9}
+.footer{border-radius:30px 30px 0 0}
+
+/* Text must remain readable while scroll controls movement. */
+@media(prefers-reduced-motion:no-preference){
+  .reveal.is-visible{opacity:1!important}
+  .overview-top,
+  .layer-copy,
+  .solutions .section-line,
+  .difference .split-heading,
+  .difference-tabs,
+  .numbers-grid,
+  .method .split-heading,
+  .ecosystem-grid>div:first-child,
+  .contact-copy,
+  .faq .section-line{
+    opacity:1!important;
+  }
+  .solution-card,
+  .steps li,
+  .capability,
+  .challenge-card,
+  .faq details{
+    opacity:calc(.68 + var(--scene)*.32)!important;
+  }
+  .big-statement{opacity:calc(.62 + var(--scene)*.38)!important}
+  .hero-content{opacity:1!important}
+  .hero-bottom,.hero h1,.hero .eyebrow{opacity:1!important}
+}
+
+/* More consistent vertical rhythm */
+.overview{padding-top:clamp(90px,8vw,140px)}
+.solutions{padding-top:clamp(80px,7vw,120px);padding-bottom:clamp(90px,8vw,140px)}
+.difference,.numbers,.method,.ecosystem,.challenges,.faq{padding-top:clamp(90px,8vw,135px);padding-bottom:clamp(90px,8vw,135px)}
+.section-line,.split-heading{margin-bottom:clamp(44px,5vw,78px)}
+.solutions-grid{gap:clamp(14px,1.2vw,22px)}
+.copy-columns{gap:clamp(20px,2.5vw,42px)}
+.stat-pair{gap:clamp(18px,2vw,34px)}
+
+/* Mobile production pass */
+@media(max-width:900px){
+  .hero h1{font-size:clamp(54px,11.5vw,84px)!important;max-width:92%!important}
+  .overview-top h2,.split-heading h2,.numbers h2,.ecosystem h2,.challenges h2,.faq h2{font-size:clamp(42px,9.5vw,66px)!important}
+  .section-line h3{font-size:clamp(36px,8vw,54px)!important}
+  .solution-card{min-height:auto}
+  .solution-card h3{max-width:17ch}
+  .site-header{max-width:calc(100vw - 24px)}
+}
+@media(max-width:620px){
+  .hero h1{font-size:clamp(48px,12vw,68px)!important;line-height:.92!important;max-width:100%!important}
+  .hero-bottom{align-items:flex-start}
+  .hero-bottom p{font-size:15.5px!important}
+  .button{white-space:normal}
+  .copy-columns{grid-template-columns:1fr!important}
+  .tab-list{grid-template-columns:1fr!important}
+  .tab-list button{min-height:70px}
+  .capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .capability:last-child{grid-column:1/-1!important}
+  .footer-columns{grid-template-columns:1fr!important}
+}
