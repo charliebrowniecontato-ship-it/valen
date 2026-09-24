@@ -82,8 +82,8 @@ function renderSequence(el,p){
   }
   frames[a].style.opacity=String(1-t);
   frames[b].style.opacity=String(b===a?1:t);
-  frames[a].style.transform=`translate3d(0,${-2*t}px,0) scale(${1+.012*t})`;
-  frames[b].style.transform=`translate3d(0,${3*(1-t)}px,0) scale(${.988+.012*t})`;
+  frames[a].style.transform=`translate3d(0,${-3*t}px,0) scale(${1+.018*t})`;
+  frames[b].style.transform=`translate3d(0,${5*(1-t)}px,0) scale(${.982+.018*t})`;
   seqState.set(el,state);
 }
 
@@ -174,7 +174,7 @@ function paint(){
   /* hero */
   if(hero){
     const hg=geo.get(hero);
-    const hp=hg?clamp(y/Math.max(1,hg.height*.88)):0;
+    const hp=hg?clamp(y/Math.max(1,hg.height*.88)):0; root.style.setProperty('--hero-p',smooth(hp).toFixed(4));
     const hScene=smooth(clamp(hp/.88));
     renderSequence(heroSeq,hScene);
     const inert=Math.max(-1,Math.min(1,velocity/135));
@@ -269,7 +269,7 @@ function tick(time){
   const dt=last?Math.min(time-last,50):16.7;
   last=time;
   const before=y;
-  const alpha=1-Math.exp(-dt/76);
+  const alpha=1-Math.exp(-dt/62);
   y+=(target-y)*alpha;
   velocity=(y-before)/Math.max(1,dt)*1000;
   pointerNow.x+=(pointer.x-pointerNow.x)*alpha;
