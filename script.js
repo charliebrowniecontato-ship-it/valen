@@ -89,9 +89,6 @@ function renderSequence(el,p){
 
 const hero=$('.hero');
 const heroSeq=$('[data-sequence="hero"]');
-const heroV=$('.hero-v');
-const heroOrbit=$('.hero-orbit');
-const heroDrive=$('.hero-drive-orbit');
 const heroContent=$('.hero-content');
 const heroHalo=$('.hero-halo');
 
@@ -104,11 +101,9 @@ const solutions=$('.solutions');
 const solutionsSeq=$('[data-sequence="solutions"]');
 
 const difference=$('.difference');
-const diffBust=$('.difference-bust');
 
 const numbers=$('.numbers');
 const network=$('.network-art');
-const thinker=$('.numbers-thinker');
 
 const method=$('.method');
 const methodSeq=$('[data-sequence="method"]');
@@ -116,8 +111,6 @@ const steps=$$('.steps li');
 
 const ecosystem=$('.ecosystem');
 const challenges=$('.challenges');
-const problemSeq=$('[data-sequence="problems"]');
-const pulse=$('.challenge-pulse');
 
 const contact=$('.contact');
 const statue=$('.contact-art');
@@ -165,9 +158,10 @@ function paint(){
   document.body.classList.toggle('has-scrolled',target>24);
 
   sceneEls.forEach(setScene);
+  if(challenges){challenges.style.setProperty('--scene-in','1');}
 
   if(reduced.matches){
-    [heroSeq,solutionsSeq,methodSeq,problemSeq,contactArmSeq].forEach(el=>renderSequence(el,0));
+    [heroSeq,solutionsSeq,methodSeq,contactArmSeq].forEach(el=>renderSequence(el,0));
     return;
   }
 
@@ -178,13 +172,10 @@ function paint(){
     const hScene=smooth(clamp(hp/.88));
     renderSequence(heroSeq,hScene);
     const inert=Math.max(-1,Math.min(1,velocity/135));
-    if(heroV)heroV.style.transform=`translate3d(${pointerNow.x*18+inert*4}px,${-hp*72+pointerNow.y*12}px,0) rotate(${-hp*9+inert}deg) scale(${1-hp*.035})`;
-    if(heroOrbit)heroOrbit.style.transform=`translate3d(${pointerNow.x*9-inert*3}px,${hp*52+pointerNow.y*7}px,0) rotate(${-10+hp*82}deg)`;
-    if(heroDrive){
-      heroDrive.style.transform=`translate3d(${pointerNow.x*6}px,calc(-50% + ${hp*25}px),0) rotate(${hp*7}deg) scale(${1.03+hp*.05})`;
-      heroDrive.style.opacity=String(.20+Math.sin(hp*Math.PI)*.11);
+    if(heroSeq){
+      heroSeq.style.transform=`translate3d(${pointerNow.x*12+inert*3}px,calc(-50% + ${hp*34+pointerNow.y*9}px),0) rotate(${-7+hp*112+inert*1.4}deg) scale(${.96+Math.sin(hp*Math.PI)*.08})`;
     }
-    if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.16}) translate3d(0,${hp*22}px,0)`;
+    if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.12}) translate3d(0,${hp*18}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
       heroContent.style.opacity='1';
@@ -194,11 +185,14 @@ function paint(){
   /* about / layered plates */
   if(plateStory&&plates.length){
     const p=smooth(desktop.matches?pin(plateStory):travel(plateStory,.94,.10));
-    [54-15*p,31+6*p,7+24*p].forEach((pos,i)=>{
-      plates[i].style.transform=`translate3d(${(i-1)*8*(1-p)}%,${pos}%,0) rotate(${(i-1)*6*(1-p)}deg) scale(${.94+p*.06})`;
-      plates[i].style.opacity=String(.45+p*.55);
+    const spread=Math.sin(Math.PI*p);
+    const offsets=[-19,0,19];
+    plates.forEach((plate,i)=>{
+      const side=i-1;
+      plate.style.transform=`translate3d(${side*7*spread}%,${offsets[i]*spread}%,0) rotate(${side*4*spread}deg) scale(${.90+spread*.13})`;
+      plate.style.opacity=String(.72+spread*.28);
     });
-    if(plateArt)plateArt.style.transform=`translate3d(0,${(p-.5)*-22}px,0) scale(${.965+p*.035})`;
+    if(plateArt)plateArt.style.transform=`translate3d(0,${(p-.5)*-16}px,0) scale(${.97+spread*.035})`;
   }
 
   /* solutions network sequence */
@@ -208,41 +202,19 @@ function paint(){
     if(solutionsSeq)solutionsSeq.style.transform=`translate3d(${(1-sp)*35}px,${(sp-.5)*-24}px,0) rotate(${-5+sp*11}deg) scale(${.93+sp*.07})`;
   }
 
-  /* differentiation atmosphere */
-  if(difference&&diffBust){
-    const dp=smooth(travel(difference,.94,.08));
-    diffBust.style.transform=`translate3d(${(1-dp)*70}px,${(dp-.5)*-42}px,0) rotate(${4-dp*9}deg) scale(${.94+dp*.08})`;
-    diffBust.style.opacity=String(.07+Math.sin(dp*Math.PI)*.08);
-  }
-
   /* numbers / owned visual asset */
   if(numbers){
     const np=smooth(travel(numbers,.92,.10));
-    if(network)network.style.transform=`translate3d(${(1-np)*-42}px,${(1-np)*38}px,0) rotate(${-10+np*24}deg) scale(${.91+np*.09})`;
-    if(thinker){
-      thinker.style.transform=`translate3d(${(1-np)*75}px,${(np-.5)*-34}px,0) rotate(${5-np*9}deg) scale(${.92+np*.08})`;
-      thinker.style.opacity=String(.20+np*.24);
-    }
+    if(network)network.style.transform=`translate3d(${(1-np)*-28}px,${(1-np)*24}px,0) rotate(${-7+np*16}deg) scale(${.94+np*.06})`;
   }
 
   /* method: true frame scrub, not a simple rotation */
   if(method){
     const mp=smooth(travel(method,.94,.08));
     renderSequence(methodSeq,mp);
-    if(methodSeq)methodSeq.style.transform=`translate3d(${(1-mp)*-35}px,${(1-mp)*24}px,0) scale(${.94+mp*.06})`;
+    if(methodSeq)methodSeq.style.transform=`translate3d(${(1-mp)*-24}px,${(1-mp)*18}px,0) rotate(${-24+mp*248}deg) scale(${.95+mp*.05})`;
     const active=Math.min(steps.length-1,Math.floor(mp*steps.length));
     steps.forEach((el,i)=>el.classList.toggle('is-active',i===active));
-  }
-
-  /* challenge network */
-  if(challenges){
-    const cp=smooth(travel(challenges,.94,.08));
-    renderSequence(problemSeq,cp);
-    if(problemSeq)problemSeq.style.transform=`translate3d(${(1-cp)*50}px,${(cp-.5)*-28}px,0) rotate(${-5+cp*10}deg) scale(${.92+cp*.08})`;
-    if(pulse){
-      pulse.style.transform=`translate3d(${pointerNow.x*5}px,${(cp-.5)*-38+pointerNow.y*4}px,0) rotate(${cp*35}deg) scale(${.9+cp*.18})`;
-      pulse.style.opacity=String(.14+Math.sin(cp*Math.PI)*.22);
-    }
   }
 
   /* contact: pinned body + 5-state arm sequence */
