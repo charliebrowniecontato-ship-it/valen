@@ -1,208 +1,302 @@
 'use strict';
-const $ = (selector, parent = document) => parent.querySelector(selector);
-const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
-const clamp = v => Math.max(0, Math.min(1, v));
-const smooth = v => { v = clamp(v); return v * v * (3 - 2 * v); };
 
-const toggle = $('.menu-toggle');
-const nav = $('#main-nav');
-function closeMenu() { nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false'); }
-toggle.addEventListener('click', () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; nav.classList.toggle('is-open', open); toggle.setAttribute('aria-expanded', String(open)); });
-$$('a', nav).forEach(link => link.addEventListener('click', closeMenu));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { const wasOpen = nav.classList.contains('is-open'); closeMenu(); if (wasOpen) toggle.focus(); } });
-document.addEventListener('click', e => { if (!e.target.closest('.site-header')) closeMenu(); });
-$('#year').textContent = new Date().getFullYear();
+const $=(s,p=document)=>p.querySelector(s);
+const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+const clamp=v=>Math.max(0,Math.min(1,v));
+const smooth=v=>{v=clamp(v);return v*v*(3-2*v)};
+const root=document.documentElement;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const desktop=matchMedia('(min-width:901px) and (min-height:721px)');
 
-const tabs = $$('[role="tab"]');
-function selectTab(index, focus = false) {
-  tabs.forEach((tab, i) => {
-    tab.setAttribute('aria-selected', String(i === index));
-    tab.tabIndex = i === index ? 0 : -1;
-    $('#' + tab.getAttribute('aria-controls')).hidden = i !== index;
-  });
-  if (focus) tabs[index].focus();
+/* navigation */
+const toggle=$('.menu-toggle');
+const nav=$('#main-nav');
+function closeMenu(){
+  if(!nav||!toggle)return;
+  nav.classList.remove('is-open');
+  toggle.setAttribute('aria-expanded','false');
 }
-tabs.forEach((tab, i) => {
-  tab.addEventListener('click', () => selectTab(i));
-  tab.addEventListener('keydown', e => {
+if(toggle&&nav){
+  toggle.addEventListener('click',()=>{
+    const open=toggle.getAttribute('aria-expanded')!=='true';
+    nav.classList.toggle('is-open',open);
+    toggle.setAttribute('aria-expanded',String(open));
+  });
+  $$('a',nav).forEach(a=>a.addEventListener('click',closeMenu));
+  document.addEventListener('click',e=>{if(!e.target.closest('.site-header'))closeMenu()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+}
+const year=$('#year'); if(year)year.textContent=new Date().getFullYear();
+
+/* accessible tabs */
+const tabs=$$('[role="tab"]');
+function selectTab(index,focus=false){
+  tabs.forEach((tab,i)=>{
+    const selected=i===index;
+    tab.setAttribute('aria-selected',String(selected));
+    tab.tabIndex=selected?0:-1;
+    const panel=$('#'+tab.getAttribute('aria-controls'));
+    if(panel)panel.hidden=!selected;
+  });
+  if(focus&&tabs[index])tabs[index].focus();
+}
+tabs.forEach((tab,i)=>{
+  tab.addEventListener('click',()=>selectTab(i));
+  tab.addEventListener('keydown',e=>{
     let next;
-    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % tabs.length;
-    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
-    if (e.key === 'Home') next = 0;
-    if (e.key === 'End') next = tabs.length - 1;
-    if (next !== undefined) { e.preventDefault(); selectTab(next, true); }
+    if(e.key==='ArrowDown'||e.key==='ArrowRight')next=(i+1)%tabs.length;
+    if(e.key==='ArrowUp'||e.key==='ArrowLeft')next=(i+tabs.length-1)%tabs.length;
+    if(e.key==='Home')next=0;
+    if(e.key==='End')next=tabs.length-1;
+    if(next!==undefined){e.preventDefault();selectTab(next,true)}
   });
 });
 
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-const desktop = matchMedia('(min-width:901px) and (min-height:721px)');
-const root = document.documentElement;
-root.classList.toggle('js-motion', !reduced.matches);
+/* light reveal only as a fallback/entry cue; scroll remains the main animation driver */
+root.classList.toggle('js-motion',!reduced.matches);
+if('IntersectionObserver'in window){
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target)}
+  }),{threshold:.06,rootMargin:'0px 0px -7% 0px'});
+  $$('.reveal').forEach(el=>io.observe(el));
+}else $$('.reveal').forEach(el=>el.classList.add('is-visible'));
 
-const reveals = $$('.reveal');
-if ('IntersectionObserver' in window) {
-  const revealObserver = new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObserver.unobserve(e.target); }
-  }), { threshold: .06, rootMargin: '0px 0px -8% 0px' });
-  reveals.forEach(el => revealObserver.observe(el));
+/* sequence renderer: crossfades neighbor frames continuously with scroll */
+const seqState=new WeakMap();
+function renderSequence(el,p){
+  if(!el)return;
+  const frames=$$('.scrub-frame',el);
+  if(!frames.length)return;
+  if(reduced.matches){
+    frames.forEach((f,i)=>f.style.opacity=i===0?'1':'0');
+    return;
+  }
+  const x=clamp(p)*(frames.length-1);
+  const a=Math.floor(x);
+  const b=Math.min(frames.length-1,a+1);
+  const t=x-a;
+  const state=seqState.get(el)||{};
+  if(state.a!==a||state.b!==b){
+    frames.forEach(f=>f.style.opacity='0');
+    state.a=a;state.b=b;
+  }
+  frames[a].style.opacity=String(1-t);
+  frames[b].style.opacity=String(b===a?1:t);
+  frames[a].style.transform=`translate3d(0,${-2*t}px,0) scale(${1+.012*t})`;
+  frames[b].style.transform=`translate3d(0,${3*(1-t)}px,0) scale(${.988+.012*t})`;
+  seqState.set(el,state);
+}
 
-  const sectionObserver = new IntersectionObserver(entries => entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    $$('a', nav).forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id));
-  }), { rootMargin: '-20% 0px -60% 0px' });
-  $$('main section[id], #solucoes').forEach(el => sectionObserver.observe(el));
-} else reveals.forEach(el => el.classList.add('is-visible'));
+const hero=$('.hero');
+const heroSeq=$('[data-sequence="hero"]');
+const heroV=$('.hero-v');
+const heroOrbit=$('.hero-orbit');
+const heroDrive=$('.hero-drive-orbit');
+const heroContent=$('.hero-content');
+const heroHalo=$('.hero-halo');
 
-(() => {
-  const hero = $('.hero'), symbol = $('.hero-v'), orbit = $('.hero-orbit'), halo = $('.hero-halo'), heroContent = $('.hero-content');
-  const plateStory = $('.layers-story'), plateArt = $('.layers-art'), plates = $$('.plate');
-  const contact = $('.contact'), statue = $('.contact-art'), arm = $('.statue-arm');
-  const methodArt = $('.method-orbit'), network = $('.network-art'), ribbon = $('.type-ribbon');
-  const scenes = ['.overview','.solutions','.difference','.numbers','.method','.ecosystem','.challenges','.contact','.faq']
-    .map(s => $(s)).filter(Boolean);
+const overview=$('.overview');
+const plateStory=$('.layers-story');
+const plateArt=$('.layers-art');
+const plates=$$('.plate');
 
-  let y = scrollY, target = scrollY, velocity = 0, frame = 0, last = 0;
-  let geometry = new Map(), pointer = {x:0,y:0}, currentPointer = {x:0,y:0};
+const solutions=$('.solutions');
+const solutionsSeq=$('[data-sequence="solutions"]');
 
-  const measure = el => {
-    const r = el.getBoundingClientRect();
-    return {top:r.top + scrollY, height:Math.max(1,el.offsetHeight)};
-  };
+const difference=$('.difference');
+const diffBust=$('.difference-bust');
 
-  function measureAll(){
-    [hero,plateStory,contact,...scenes].filter(Boolean).forEach(el=>geometry.set(el,measure(el)));
-    geometry.set(document.documentElement,{height:Math.max(1,document.documentElement.scrollHeight-innerHeight)});
-    wake();
+const numbers=$('.numbers');
+const network=$('.network-art');
+const thinker=$('.numbers-thinker');
+
+const method=$('.method');
+const methodSeq=$('[data-sequence="method"]');
+const steps=$$('.steps li');
+
+const ecosystem=$('.ecosystem');
+const challenges=$('.challenges');
+const problemSeq=$('[data-sequence="problems"]');
+const pulse=$('.challenge-pulse');
+
+const contact=$('.contact');
+const statue=$('.contact-art');
+const contactArmSeq=$('[data-sequence="contact-arm"]');
+
+const faq=$('.faq');
+const ribbon=$('.type-ribbon');
+
+const sceneEls=[overview,solutions,difference,numbers,method,ecosystem,challenges,contact,faq].filter(Boolean);
+
+let y=scrollY,target=scrollY,velocity=0,frame=0,last=0;
+let pointer={x:0,y:0},pointerNow={x:0,y:0};
+let geo=new Map();
+
+function measure(el){
+  const r=el.getBoundingClientRect();
+  return {top:r.top+scrollY,height:Math.max(1,el.offsetHeight)};
+}
+function measureAll(){
+  [hero,plateStory,...sceneEls,ribbon].filter(Boolean).forEach(el=>geo.set(el,measure(el)));
+  geo.set(document.documentElement,{height:Math.max(1,document.documentElement.scrollHeight-innerHeight)});
+  wake();
+}
+function travel(el,start=.88,end=.14){
+  const g=geo.get(el); if(!g)return 0;
+  const from=y+innerHeight*start;
+  const range=g.height+innerHeight*(start-end);
+  return clamp((from-g.top)/Math.max(1,range));
+}
+function pin(el){
+  const g=geo.get(el); if(!g)return 0;
+  return clamp((y-g.top+95)/Math.max(1,g.height-innerHeight+110));
+}
+function setScene(el){
+  if(!el)return 0;
+  const p=smooth(travel(el,.92,.10));
+  el.style.setProperty('--scene',p.toFixed(4));
+  el.style.setProperty('--scene-in',smooth(clamp(p/.43)).toFixed(4));
+  return p;
+}
+
+function paint(){
+  const page=geo.get(document.documentElement)?.height||1;
+  root.style.setProperty('--reading',clamp(target/page).toFixed(4));
+  document.body.classList.toggle('has-scrolled',target>24);
+
+  sceneEls.forEach(setScene);
+
+  if(reduced.matches){
+    [heroSeq,solutionsSeq,methodSeq,problemSeq,contactArmSeq].forEach(el=>renderSequence(el,0));
+    return;
   }
 
-  const progress = (el, start=.82, end=.18) => {
-    const g=geometry.get(el); if(!g) return 0;
-    const viewportStart=y+innerHeight*start;
-    const viewportEnd=y+innerHeight*end;
-    const range=g.height + innerHeight*(start-end);
-    return clamp((viewportStart-g.top)/Math.max(1,range));
-  };
-
-  const pinned = el => {
-    const g=geometry.get(el); if(!g) return 0;
-    return clamp((y-g.top+90)/Math.max(1,g.height-innerHeight+110));
-  };
-
-  function setScene(el){
-    const p=smooth(progress(el,.90,.12));
-    el.style.setProperty('--scene',p.toFixed(4));
-    el.style.setProperty('--scene-enter',smooth(clamp(p/.42)).toFixed(4));
-    el.style.setProperty('--scene-leave',smooth(clamp((p-.68)/.32)).toFixed(4));
-  }
-
-  async function decodeScene(el,selector){
-    if(!el) return;
-    try{
-      await Promise.all($$(selector,el).map(async img=>{img.loading='eager';await img.decode()}));
-      el.classList.add('is-ready'); wake();
-    }catch{}
-  }
-
-  if('IntersectionObserver' in window){
-    const loader=new IntersectionObserver(entries=>entries.forEach(e=>{
-      if(!e.isIntersecting)return;
-      if(e.target===plateArt)decodeScene(e.target,'.plate');
-      else decodeScene(e.target,'.statue-body,.statue-arm');
-      loader.unobserve(e.target);
-    }),{rootMargin:'520px'});
-    if(plateArt)loader.observe(plateArt);
-    if(statue)loader.observe(statue);
-  }
-
-  function paint(){
-    const page=geometry.get(document.documentElement)?.height||1;
-    root.style.setProperty('--reading',clamp(target/page).toFixed(4));
-    document.body.classList.toggle('has-scrolled',target>24);
-
-    scenes.forEach(setScene);
-    if(reduced.matches)return;
-
-    const hg=geometry.get(hero);
-    if(hg){
-      const hp=clamp(y/hg.height);
-      const inert=Math.max(-1,Math.min(1,velocity/120));
-      symbol.style.transform=`translate3d(${currentPointer.x*28+inert*5}px,${-hp*118+currentPointer.y*18}px,0) rotate(${-hp*15+inert*1.8}deg) scale(${1-hp*.07})`;
-      orbit.style.transform=`translate3d(${currentPointer.x*12-inert*4}px,${hp*82+currentPointer.y*10}px,0) rotate(${-12+hp*112}deg) scale(${1+hp*.06})`;
-      if(halo) halo.style.transform=`translate3d(0,${hp*30}px,0) scale(${1+hp*.18})`;
-      if(heroContent){
-        heroContent.style.transform=`translate3d(0,${-hp*52}px,0)`;
-        heroContent.style.opacity=String(1-clamp((hp-.62)/.38)*.82);
-      }
-      root.style.setProperty('--header-y',`${hp>0.12?-2:0}px`);
-      root.style.setProperty('--header-scale',hp>0.12?'.985':'1');
-    }
-
-    if(plateStory && plates.length){
-      const p=smooth(desktop.matches?pinned(plateStory):progress(plateStory,.92,.12));
-      [53-13*p,31+5*p,8+22*p].forEach((position,i)=>{
-        plates[i].style.transform=`translate3d(${(i-1)*8*(1-p)}%,${position}%,0) rotate(${(i-1)*6*(1-p)}deg) scale(${.93+p*.07})`;
-      });
-      if(plateArt) plateArt.style.transform=`translate3d(0,${(p-.5)*-25}px,0) scale(${.96+p*.04})`;
-    }
-
-    const numbers=$('.numbers');
-    if(numbers&&network){
-      const np=smooth(progress(numbers,.88,.16));
-      network.style.transform=`translate3d(${(1-np)*-30}px,${(1-np)*35}px,0) rotate(${-11+np*27}deg) scale(${.9+np*.1})`;
-    }
-
-    const method=$('.method');
-    if(method&&methodArt){
-      const mp=smooth(progress(method,.9,.14));
-      methodArt.style.transform=`translate3d(0,${(1-mp)*26}px,0) rotate(${-30+mp*175}deg) scale(${.91+mp*.09})`;
-    }
-
-    if(ribbon){
-      const rp=progress(ribbon,.95,.05);
-      ribbon.style.setProperty('--ribbon-x',`${-2-rp*22}%`);
-    }
-
-    if(contact&&statue){
-      const cp=smooth(desktop.matches?pinned(contact):progress(contact,.94,.08));
-      const enter=smooth(clamp(cp/.5));
-      const leave=smooth(clamp((cp-.82)/.18));
-      statue.style.transform=`translate3d(${-11*(1-enter)+5*leave}%,${13*(1-enter)+10*leave}%,0) scale(${.92+enter*.08})`;
-      if(arm) arm.style.transform=`rotate(${52-42*enter}deg)`;
-      contact.style.setProperty('--gesture',enter.toFixed(4));
-    }
-  }
-
-  function tick(time){
-    frame=0;
-    if(document.hidden)return;
-    const dt=last?Math.min(time-last,50):16.7; last=time;
-    const prev=y;
-    const alpha=1-Math.exp(-dt/72);
-    y+=(target-y)*alpha;
-    velocity=(y-prev)/Math.max(dt,1)*1000;
-    currentPointer.x+=(pointer.x-currentPointer.x)*alpha;
-    currentPointer.y+=(pointer.y-currentPointer.y)*alpha;
-    paint();
-    if(Math.abs(y-target)>.08||Math.abs(pointer.x-currentPointer.x)>.001||Math.abs(pointer.y-currentPointer.y)>.001)frame=requestAnimationFrame(tick);
-    else last=0;
-  }
-  function wake(){if(!frame&&!document.hidden)frame=requestAnimationFrame(tick)}
-
-  addEventListener('scroll',()=>{target=scrollY;wake()},{passive:true});
-  addEventListener('resize',measureAll,{passive:true});
-  addEventListener('load',measureAll,{once:true});
-  document.addEventListener('visibilitychange',()=>{target=y=scrollY;measureAll();wake()});
-  reduced.addEventListener('change',()=>{root.classList.toggle('js-motion',!reduced.matches);measureAll()});
-  desktop.addEventListener('change',measureAll);
-  if('ResizeObserver'in window)new ResizeObserver(measureAll).observe(document.body);
-
+  /* hero */
   if(hero){
-    hero.addEventListener('pointermove',e=>{
-      if(e.pointerType!=='mouse'||reduced.matches)return;
-      const r=hero.getBoundingClientRect();
-      pointer={x:(e.clientX-r.left)/r.width-.5,y:(e.clientY-r.top)/r.height-.5};wake();
-    });
-    hero.addEventListener('pointerleave',()=>{pointer={x:0,y:0};wake()});
+    const hg=geo.get(hero);
+    const hp=hg?clamp(y/Math.max(1,hg.height*.88)):0;
+    const hScene=smooth(clamp(hp/.88));
+    renderSequence(heroSeq,hScene);
+    const inert=Math.max(-1,Math.min(1,velocity/135));
+    if(heroV)heroV.style.transform=`translate3d(${pointerNow.x*18+inert*4}px,${-hp*72+pointerNow.y*12}px,0) rotate(${-hp*9+inert}deg) scale(${1-hp*.035})`;
+    if(heroOrbit)heroOrbit.style.transform=`translate3d(${pointerNow.x*9-inert*3}px,${hp*52+pointerNow.y*7}px,0) rotate(${-10+hp*82}deg)`;
+    if(heroDrive){
+      heroDrive.style.transform=`translate3d(${pointerNow.x*6}px,calc(-50% + ${hp*25}px),0) rotate(${hp*7}deg) scale(${1.03+hp*.05})`;
+      heroDrive.style.opacity=String(.20+Math.sin(hp*Math.PI)*.11);
+    }
+    if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.16}) translate3d(0,${hp*22}px,0)`;
+    if(heroContent){
+      heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
+      heroContent.style.opacity=String(1-clamp((hp-.68)/.32)*.76);
+    }
   }
-  measureAll();
-})();
+
+  /* about / layered plates */
+  if(plateStory&&plates.length){
+    const p=smooth(desktop.matches?pin(plateStory):travel(plateStory,.94,.10));
+    [54-15*p,31+6*p,7+24*p].forEach((pos,i)=>{
+      plates[i].style.transform=`translate3d(${(i-1)*8*(1-p)}%,${pos}%,0) rotate(${(i-1)*6*(1-p)}deg) scale(${.94+p*.06})`;
+      plates[i].style.opacity=String(.45+p*.55);
+    });
+    if(plateArt)plateArt.style.transform=`translate3d(0,${(p-.5)*-22}px,0) scale(${.965+p*.035})`;
+  }
+
+  /* solutions network sequence */
+  if(solutions){
+    const sp=smooth(travel(solutions,.93,.08));
+    renderSequence(solutionsSeq,sp);
+    if(solutionsSeq)solutionsSeq.style.transform=`translate3d(${(1-sp)*35}px,${(sp-.5)*-24}px,0) rotate(${-5+sp*11}deg) scale(${.93+sp*.07})`;
+  }
+
+  /* differentiation atmosphere */
+  if(difference&&diffBust){
+    const dp=smooth(travel(difference,.94,.08));
+    diffBust.style.transform=`translate3d(${(1-dp)*70}px,${(dp-.5)*-42}px,0) rotate(${4-dp*9}deg) scale(${.94+dp*.08})`;
+    diffBust.style.opacity=String(.035+Math.sin(dp*Math.PI)*.09);
+  }
+
+  /* numbers / owned visual asset */
+  if(numbers){
+    const np=smooth(travel(numbers,.92,.10));
+    if(network)network.style.transform=`translate3d(${(1-np)*-42}px,${(1-np)*38}px,0) rotate(${-10+np*24}deg) scale(${.91+np*.09})`;
+    if(thinker){
+      thinker.style.transform=`translate3d(${(1-np)*75}px,${(np-.5)*-34}px,0) rotate(${5-np*9}deg) scale(${.92+np*.08})`;
+      thinker.style.opacity=String(.12+np*.28);
+    }
+  }
+
+  /* method: true frame scrub, not a simple rotation */
+  if(method){
+    const mp=smooth(travel(method,.94,.08));
+    renderSequence(methodSeq,mp);
+    if(methodSeq)methodSeq.style.transform=`translate3d(${(1-mp)*-35}px,${(1-mp)*24}px,0) scale(${.94+mp*.06})`;
+    const active=Math.min(steps.length-1,Math.floor(mp*steps.length));
+    steps.forEach((el,i)=>el.classList.toggle('is-active',i===active));
+  }
+
+  /* challenge network */
+  if(challenges){
+    const cp=smooth(travel(challenges,.94,.08));
+    renderSequence(problemSeq,cp);
+    if(problemSeq)problemSeq.style.transform=`translate3d(${(1-cp)*50}px,${(cp-.5)*-28}px,0) rotate(${-5+cp*10}deg) scale(${.92+cp*.08})`;
+    if(pulse){
+      pulse.style.transform=`translate3d(${pointerNow.x*5}px,${(cp-.5)*-38+pointerNow.y*4}px,0) rotate(${cp*35}deg) scale(${.9+cp*.18})`;
+      pulse.style.opacity=String(.08+Math.sin(cp*Math.PI)*.22);
+    }
+  }
+
+  /* contact: pinned body + 5-state arm sequence */
+  if(contact&&statue){
+    const cp=smooth(desktop.matches?pin(contact):travel(contact,.95,.06));
+    renderSequence(contactArmSeq,cp);
+    const enter=smooth(clamp(cp/.68));
+    const leave=smooth(clamp((cp-.9)/.1));
+    statue.style.transform=`translate3d(${-10*(1-enter)+4*leave}%,${12*(1-enter)+8*leave}%,0) scale(${.93+enter*.07})`;
+    if(contactArmSeq)contactArmSeq.style.transform=`translate3d(${pointerNow.x*4}px,${pointerNow.y*4}px,0)`;
+    contact.style.setProperty('--gesture',enter.toFixed(4));
+  }
+
+  /* ribbon */
+  if(ribbon){
+    const rp=travel(ribbon,.98,.02);
+    ribbon.style.setProperty('--ribbon-x',`${-3-rp*18}%`);
+  }
+}
+
+function tick(time){
+  frame=0;
+  if(document.hidden)return;
+  const dt=last?Math.min(time-last,50):16.7;
+  last=time;
+  const before=y;
+  const alpha=1-Math.exp(-dt/76);
+  y+=(target-y)*alpha;
+  velocity=(y-before)/Math.max(1,dt)*1000;
+  pointerNow.x+=(pointer.x-pointerNow.x)*alpha;
+  pointerNow.y+=(pointer.y-pointerNow.y)*alpha;
+  paint();
+  if(Math.abs(y-target)>.08||Math.abs(pointer.x-pointerNow.x)>.001||Math.abs(pointer.y-pointerNow.y)>.001){
+    frame=requestAnimationFrame(tick);
+  }else last=0;
+}
+function wake(){if(!frame&&!document.hidden)frame=requestAnimationFrame(tick)}
+
+addEventListener('scroll',()=>{target=scrollY;wake()},{passive:true});
+addEventListener('resize',measureAll,{passive:true});
+addEventListener('load',measureAll,{once:true});
+document.addEventListener('visibilitychange',()=>{target=y=scrollY;measureAll();wake()});
+reduced.addEventListener('change',()=>{root.classList.toggle('js-motion',!reduced.matches);measureAll()});
+desktop.addEventListener('change',measureAll);
+if('ResizeObserver'in window)new ResizeObserver(measureAll).observe(document.body);
+
+if(hero){
+  hero.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse'||reduced.matches)return;
+    const r=hero.getBoundingClientRect();
+    pointer={x:(e.clientX-r.left)/r.width-.5,y:(e.clientY-r.top)/r.height-.5};
+    wake();
+  });
+  hero.addEventListener('pointerleave',()=>{pointer={x:0,y:0};wake()});
+}
+
+measureAll();
