@@ -1,201 +1,145 @@
-const toggle = document.querySelector('.menu-toggle');
-const nav = document.querySelector('#main-nav');
+'use strict';
+const $ = (selector, parent = document) => parent.querySelector(selector);
+const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
+const toggle = $('.menu-toggle');
+const nav = $('#main-nav');
+function closeMenu() { nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false'); }
+toggle.addEventListener('click', () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; nav.classList.toggle('is-open', open); toggle.setAttribute('aria-expanded', String(open)); });
+$$('a', nav).forEach(link => link.addEventListener('click', closeMenu));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const wasOpen = nav.classList.contains('is-open'); closeMenu(); if (wasOpen) toggle.focus(); } });
+document.addEventListener('click', e => { if (!e.target.closest('.site-header')) closeMenu(); });
+$('#year').textContent = new Date().getFullYear();
 
-function closeMenu() {
-  nav?.classList.remove('is-open');
-  toggle?.setAttribute('aria-expanded', 'false');
-  toggle?.setAttribute('aria-label', 'Abrir menu');
-}
-
-toggle?.addEventListener('click', () => {
-  const open = toggle.getAttribute('aria-expanded') !== 'true';
-  nav?.classList.toggle('is-open', open);
-  toggle.setAttribute('aria-expanded', String(open));
-  toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-});
-
-nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
-document.addEventListener('click', event => {
-  if (nav?.classList.contains('is-open') && !nav.contains(event.target) && !toggle?.contains(event.target)) closeMenu();
-});
-document.querySelector('#year').textContent = String(new Date().getFullYear());
-
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const motionAllowed = !reducedMotion.matches;
-const revealTargets = document.querySelectorAll('.section-top, .intro-grid, .section-heading, .problem-list, .steps, .solutions-grid, .solution-bottom');
-if (motionAllowed && 'IntersectionObserver' in window) {
-  revealTargets.forEach(el => {
-    el.classList.add('reveal');
-    const children = el.matches('.problem-list, .solutions-grid') ? el.querySelectorAll('article') : el.matches('.steps') ? el.querySelectorAll('li') : [];
-    children.forEach((child, i) => { child.classList.add('reveal-item'); child.style.setProperty('--reveal-delay', `${Math.min(i * 80, 240)}ms`); });
+// Accessible tabs: selection works with touch, mouse and the keyboard.
+const tabs = $$('[role="tab"]');
+function selectTab(index, focus = false) {
+  tabs.forEach((tab, i) => {
+    tab.setAttribute('aria-selected', String(i === index));
+    tab.tabIndex = i === index ? 0 : -1;
+    $('#' + tab.getAttribute('aria-controls')).hidden = i !== index;
   });
-  document.documentElement.classList.add('motion-ready');
-  const reveals = new IntersectionObserver(entries => {
-    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('in-view'); reveals.unobserve(entry.target); } });
-  }, { threshold: .08, rootMargin: '0px 0px -35px 0px' });
-  revealTargets.forEach(el => reveals.observe(el));
+  if (focus) tabs[index].focus();
 }
-
-const header = document.querySelector('.site-header');
-const navLinks = document.querySelectorAll('.nav a[href^="#"]');
-const railLinks = document.querySelectorAll('.chapter-rail a[href^="#"]');
-const sections = document.querySelectorAll('main section[id]');
-if ('IntersectionObserver' in window) {
-  const current = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      navLinks.forEach(link => link.removeAttribute('aria-current'));
-      document.querySelector(`.nav a[href="#${entry.target.id}"]`)?.setAttribute('aria-current', 'location');
-      railLinks.forEach(link => link.removeAttribute('aria-current'));
-      document.querySelector(`.chapter-rail a[href="#${entry.target.id}"]`)?.setAttribute('aria-current', 'location');
-    });
-  }, { rootMargin: '-25% 0px -60% 0px' });
-  sections.forEach(section => current.observe(section));
-}
-let scrollQueued = false;
-window.addEventListener('scroll', () => {
-  if (scrollQueued) return;
-  scrollQueued = true;
-  requestAnimationFrame(() => { header?.classList.toggle('is-scrolled', window.scrollY > 24); scrollQueued = false; });
-}, { passive: true });
-
-const steps = [...document.querySelectorAll('.steps li')];
-if ('IntersectionObserver' in window) {
-  const activeStep = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) { steps.forEach(step => step.classList.remove('is-active')); entry.target.classList.add('is-active'); }
-    });
-  }, { rootMargin: '-28% 0px -45% 0px' });
-  steps.forEach(step => activeStep.observe(step));
-}
-const solutionCards = [...document.querySelectorAll('.solutions-grid article')];
-function activateSolution(card) { solutionCards.forEach(item => item.classList.toggle('is-active', item === card)); }
-solutionCards.forEach(card => {
-  card.addEventListener('pointerenter', () => activateSolution(card));
-  card.addEventListener('click', () => activateSolution(card));
-  card.addEventListener('focusin', () => activateSolution(card));
+tabs.forEach((tab, i) => {
+  tab.addEventListener('click', () => selectTab(i));
+  tab.addEventListener('keydown', e => {
+    let next;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
+    if (e.key === 'Home') next = 0;
+    if (e.key === 'End') next = tabs.length - 1;
+    if (next !== undefined) { e.preventDefault(); selectTab(next, true); }
+  });
 });
-solutionCards[1]?.classList.add('is-active');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const desktop = matchMedia('(min-width:901px) and (min-height:721px)');
+const root = document.documentElement;
+const reveals = $$('.reveal');
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObserver.unobserve(e.target); }
+  }), { threshold: .08, rootMargin: '0px 0px -15px 0px' });
+  reveals.forEach(el => revealObserver.observe(el));
+  const sectionObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    $$('a', nav).forEach(a => {
+      if (a.getAttribute('href') === '#' + e.target.id) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    });
+  }), { rootMargin: '-20% 0px -60% 0px' });
+  $$('main section[id], #solucoes').forEach(el => sectionObserver.observe(el));
+  const steps = $$('.steps li');
+  const stepObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) steps.forEach(el => el.classList.toggle('is-active', el === e.target));
+  }), { rootMargin: '-22% 0px -50% 0px' });
+  steps.forEach(el => stepObserver.observe(el));
+} else reveals.forEach(el => el.classList.add('is-visible'));
 
-// One scroll clock, continuous transforms and a short, time-based catch-up.
-// No wheel interception, image swapping or continuously running idle loop.
+// All scroll scenes share one clock. The native scroll is never intercepted.
 (() => {
-  const clamp = x => Math.max(0, Math.min(1, x));
-  const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
-  const root = document.documentElement;
-  const plateStory = document.querySelector('.layers-story');
-  const plateArt = document.querySelector('.layers-art');
-  const plates = [...document.querySelectorAll('.layer-plate')];
-  const labels = [...document.querySelectorAll('.layer-labels span')];
-  const statue = document.querySelector('.contact-art');
-  const arm = document.querySelector('.statue-arm');
-  const contact = document.querySelector('.contact');
-  const hero = document.querySelector('.hero-art');
-  const orbit = hero?.querySelector('.hero-orbit');
-  const symbol = hero?.querySelector('.hero-v');
-  const method = document.querySelector('.method-art .motion-poster');
-  const problem = document.querySelector('.problem-art .motion-poster');
-  const network = document.querySelector('.solutions-art .motion-poster');
-  const highlight = document.querySelector('.solution-highlight');
-  const desktop = matchMedia('(min-width:901px) and (min-height:650px)');
-  let pointer = {x:0,y:0}, smoothPointer = {x:0,y:0};
-  let y = scrollY, target = scrollY, frame = 0, lastTime = 0;
-  let geometry = {};
-  const measure = el => ({top:el.getBoundingClientRect().top + scrollY,height:el.offsetHeight});
-  const traverse = (g, viewport = .8) => clamp((y + innerHeight * viewport - g.top) / (g.height + innerHeight * .5));
-  const pinProgress = g => clamp((y - g.top + 88) / Math.max(1,g.height - innerHeight + 88));
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const ease = v => { v = clamp(v); return v * v * (3 - 2 * v); };
+  const hero = $('.hero'), symbol = $('.hero-v'), orbit = $('.hero-orbit');
+  const plateStory = $('.layers-story'), plateArt = $('.layers-art'), plates = $$('.plate');
+  const contact = $('.contact'), statue = $('.contact-art'), arm = $('.statue-arm');
+  const method = $('.method'), methodArt = $('.method-orbit');
+  const numbers = $('.numbers'), network = $('.network-art');
+  const ribbon = $('.type-ribbon');
+  let geometry = {}, y = scrollY, target = scrollY, frame = 0, last = 0;
+  let pointer = { x:0, y:0 }, currentPointer = { x:0, y:0 };
+  const measure = el => ({ top:el.getBoundingClientRect().top + scrollY, height:el.offsetHeight });
+  const travel = g => clamp((y + innerHeight * .8 - g.top) / (g.height + innerHeight * .6));
+  const pin = g => clamp((y - g.top + 95) / Math.max(1, g.height - innerHeight + 110));
   function measureAll() {
-    geometry = {
-      plates:measure(plateStory),contact:measure(contact),hero:measure(document.querySelector('.hero')),
-      method:measure(document.querySelector('.method')),problem:measure(document.querySelector('.problem-stage')),
-      network:measure(document.querySelector('.solutions-showcase'))
-    };
+    geometry = { hero:measure(hero), plates:measure(plateStory), contact:measure(contact), method:measure(method), numbers:measure(numbers), ribbon:measure(ribbon), page:Math.max(1,document.documentElement.scrollHeight-innerHeight) };
     wake();
   }
-  async function ready(el, images) {
+  async function decodeScene(el, selector) {
     try {
-      await Promise.all(images.map(async img => {
-        if (img.loading === 'lazy') img.loading = 'eager';
-        await img.decode();
-      }));
+      await Promise.all($$(selector,el).map(async img => { img.loading = 'eager'; await img.decode(); }));
       el.classList.add('is-ready');
       wake();
-    } catch { /* A complete poster stays visible if a layer cannot load. */ }
+    } catch { /* The complete poster remains visible when a layer fails. */ }
   }
-  const loader = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target;
-    ready(el,[...el.querySelectorAll('.layer-plate,.statue-body,.statue-arm')]);
-    loader.unobserve(el);
-  }),{rootMargin:'500px'});
-  loader.observe(plateArt);loader.observe(statue);
+  if ('IntersectionObserver' in window) {
+    const loader = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      decodeScene(e.target, e.target === plateArt ? '.plate' : '.statue-body,.statue-arm');
+      loader.unobserve(e.target);
+    }), { rootMargin:'450px' });
+    loader.observe(plateArt); loader.observe(statue);
+  }
   function paint() {
-    const p = desktop.matches ? pinProgress(geometry.plates) : traverse(geometry.plates);
-    const assemble = ease((p - .08) / .78);
-    plateStory.style.setProperty('--scene-p', p.toFixed(4));
-    // Every plate's painted pixels fit inside 10–89% of this square.
-    // Source canvases have 63% transparent space below the plate.
-    const positions = [54 - 12 * assemble,32 + 2 * assemble,10 + 16 * assemble];
-    plates.forEach((el,i) => {
-      const spread = 1 - assemble;
-      const dx = (i - 1) * 8 * spread + smoothPointer.x * (3-i);
-      el.style.transform = `translate3d(${dx}%,${positions[i]}%,0) rotate(${(i-1)*5*spread}deg)`;
+    root.style.setProperty('--reading', clamp(target / geometry.page).toFixed(4));
+    if (reduced.matches) return;
+    const h = clamp(y / geometry.hero.height);
+    symbol.style.transform = `translate3d(${currentPointer.x*22}px,${-h*95+currentPointer.y*15}px,0) rotate(${-h*13}deg) scale(${1-h*.05})`;
+    orbit.style.transform = `translate3d(${currentPointer.x*10}px,${h*65+currentPointer.y*8}px,0) rotate(${-12+h*95}deg)`;
+    const p = ease(desktop.matches ? pin(geometry.plates) : travel(geometry.plates));
+    // Each source plate fills only the top 37% of its square canvas.
+    [51-9*p,30+4*p,9+17*p].forEach((position,i) => {
+      plates[i].style.transform = `translate3d(${(i-1)*6*(1-p)}%,${position}%,0) rotate(${(i-1)*4*(1-p)}deg)`;
     });
-    labels.forEach((el,i) => {el.style.top = `${positions[2-i]+12}%`;el.style.opacity = String(.55+.45*assemble);});
-    const cp = desktop.matches ? pinProgress(geometry.contact) : traverse(geometry.contact);
-    const entry = desktop.matches ? ease((y + innerHeight - geometry.contact.top)/(innerHeight*.85)) : 1;
-    const lift = ease((cp-.04)/.58);
-    const exit = desktop.matches ? ease((cp-.88)/.12) : 0;
-    statue.style.transform = `translate3d(${(-12*(1-entry)+7*exit).toFixed(3)}%,${(10*(1-entry)+14*exit).toFixed(3)}%,0) rotate(${(-3*(1-entry)).toFixed(3)}deg)`;
-    statue.style.opacity = String(1 - exit*.5);
-    arm.style.transform = `rotate(${(48*(1-lift)+12*lift).toFixed(3)}deg)`;
+    const cp = desktop.matches ? pin(geometry.contact) : travel(geometry.contact);
+    const lift = ease((cp-.04)/.65);
+    const entering = desktop.matches ? ease((y+innerHeight-geometry.contact.top)/(innerHeight*.75)) : 1;
+    const leaving = desktop.matches ? ease((cp-.92)/.08) : 0;
+    statue.style.transform = `translate3d(${-8*(1-entering)+3*leaving}%,${8*(1-entering)+10*leaving}%,0)`;
+    arm.style.transform = `rotate(${48-36*lift}deg)`;
     contact.style.setProperty('--gesture',lift.toFixed(4));
-    const hp = clamp(y / geometry.hero.height);
-    orbit.style.transform = `translate3d(${smoothPointer.x*6}px,${hp*75+smoothPointer.y*4}px,0) rotate(${hp*70-12}deg) scale(${1-hp*.08})`;
-    symbol.style.transform = `translate3d(${smoothPointer.x*14}px,${-hp*65+smoothPointer.y*10}px,0) rotate(${hp*-9}deg)`;
-    const mp = traverse(geometry.method);
-    method.style.transform = `rotate(${-28+mp*145}deg) scale(${.9+.1*Math.sin(mp*Math.PI)})`;
-    const pp = traverse(geometry.problem);
-    problem.style.transform = `translate3d(0,${30-pp*60}px,0) rotate(${-8+pp*16}deg)`;
-    const np = traverse(geometry.network);
-    network.style.transform = `rotate(${-12+np*24}deg) scale(${.88+np*.12})`;
-    highlight.style.transform = network.style.transform;
+    const mp = travel(geometry.method);
+    methodArt.style.transform = `rotate(${-25+mp*145}deg)`;
+    network.style.transform = `rotate(${-8+travel(geometry.numbers)*20}deg)`;
+    ribbon.style.setProperty('--ribbon-x',`${-3-travel(geometry.ribbon)*15}%`);
   }
   function tick(time) {
-    frame = 0;
-    if (reducedMotion.matches || document.hidden) return;
-    const dt = lastTime ? Math.min(time-lastTime,50) : 16.7;
-    lastTime = time;
-    const alpha = 1-Math.exp(-dt/65);
-    y += (target-y)*alpha;
-    smoothPointer.x += (pointer.x-smoothPointer.x)*alpha;
-    smoothPointer.y += (pointer.y-smoothPointer.y)*alpha;
+    frame=0;
+    if(document.hidden) return;
+    const dt=last ? Math.min(time-last,50) : 16.7; last=time;
+    const alpha=1-Math.exp(-dt/65);
+    y+=(target-y)*alpha;
+    currentPointer.x+=(pointer.x-currentPointer.x)*alpha;
+    currentPointer.y+=(pointer.y-currentPointer.y)*alpha;
     paint();
-    if (Math.abs(target-y)>.1 || Math.abs(pointer.x-smoothPointer.x)>.002 || Math.abs(pointer.y-smoothPointer.y)>.002) frame=requestAnimationFrame(tick);
-    else lastTime=0;
+    if(!reduced.matches && (Math.abs(y-target)>.15 || Math.abs(pointer.x-currentPointer.x)>.002 || Math.abs(pointer.y-currentPointer.y)>.002)) frame=requestAnimationFrame(tick);
+    else last=0;
   }
-  function wake() { if(!frame && !reducedMotion.matches && !document.hidden) frame=requestAnimationFrame(tick); }
-  const updatePreference = () => {
-    root.classList.toggle('motion-enabled',!reducedMotion.matches);
-    if(reducedMotion.matches){cancelAnimationFrame(frame);frame=0;lastTime=0;}
-    target=y=scrollY; measureAll();
-  };
+  function wake(){if(!frame && !document.hidden) frame=requestAnimationFrame(tick);}
+  function preference(){
+    root.classList.toggle('js-motion',!reduced.matches);
+    if(reduced.matches) [symbol,orbit,...plates,statue,arm,methodArt,network].forEach(el => el.style.removeProperty('transform'));
+    y=target=scrollY; measureAll();
+  }
   window.addEventListener('scroll',()=>{target=scrollY;wake();},{passive:true});
   window.addEventListener('resize',measureAll,{passive:true});
   window.addEventListener('load',measureAll,{once:true});
   document.addEventListener('visibilitychange',()=>{target=y=scrollY;wake();});
-  reducedMotion.addEventListener('change',updatePreference);
-  desktop.addEventListener('change',measureAll);
+  reduced.addEventListener('change',preference); desktop.addEventListener('change',measureAll);
+  if ('ResizeObserver' in window) new ResizeObserver(measureAll).observe(document.body);
   hero.addEventListener('pointermove',e=>{
-    if(e.pointerType!=='mouse')return;
-    const b=hero.getBoundingClientRect();pointer={x:(e.clientX-b.left)/b.width-.5,y:(e.clientY-b.top)/b.height-.5};wake();
+    if(e.pointerType!=='mouse'||reduced.matches)return;
+    const rect=hero.getBoundingClientRect(); pointer={x:(e.clientX-rect.left)/rect.width-.5,y:(e.clientY-rect.top)/rect.height-.5};wake();
   });
   hero.addEventListener('pointerleave',()=>{pointer={x:0,y:0};wake();});
-  const hoverNames=['marketing','vendas','tecnologia'];
-  solutionCards.forEach((card,i)=>{
-    const choose=()=>{highlight.src=`/assets/motion/solutions/layers/hover-${hoverNames[i]}.webp`;};
-    card.addEventListener('pointerenter',choose);card.addEventListener('focusin',choose);card.addEventListener('click',choose);
-  });
-  updatePreference();
+  preference();
 })();

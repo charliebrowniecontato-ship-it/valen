@@ -29,3 +29,12 @@ Em telas menores, as cenas seguem o fluxo normal da página, com movimento mais 
 ## Verificação
 
 Sintaxe JavaScript, estrutura HTML e caminhos de imagens verificados. Na versão publicada, as placas foram conferidas abertas e empilhadas; a estátua, na entrada e no fim do gesto. O link do contato aponta para o WhatsApp informado no projeto.
+
+## Revisão de 24/09/2026 — composição Atlas / identidade Valen
+
+- Estrutura visual adaptada do ZIP de referência fornecido pelo cliente: navegação flutuante, abertura imersiva, apresentação, três soluções, seis diferenciais selecionáveis, números da empresa, método, conexões, desafios, contato e perguntas frequentes.
+- Logos, imagens, informações, links e cores pertencem à Valen. Sem números de performance, certificações, clientes ou depoimentos da Atlas.
+- Fontes locais provenientes do pacote de referência. Nenhum script de terceiros ou rastreador importado.
+- Animações por transformações contínuas, rolagem nativa, camadas com poster de fallback e suporte a movimento reduzido.
+- Publicação no projeto existente: https://valen-eta-nine.vercel.app/
+- CSS e JavaScript versionados no HTML para a atualização imediata da composição.
