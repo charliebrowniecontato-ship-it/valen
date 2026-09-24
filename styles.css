@@ -691,3 +691,169 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
   .capability:last-child{grid-column:1/-1!important}
   .footer-columns{grid-template-columns:1fr!important}
 }
+
+
+/* === TARGETED FIXES — HERO / LAYERS / DIFFERENTIALS / NUMBERS / METHOD / CHALLENGES === */
+
+/* Hero: one animated object only. No duplicate V/orbit layers. */
+.hero-stage{
+  display:grid;
+  place-items:center;
+}
+.hero-halo{z-index:0}
+.hero-sequence{
+  position:absolute!important;
+  width:min(58vw,820px)!important;
+  aspect-ratio:1;
+  right:2.5vw!important;
+  top:50%!important;
+  transform-origin:50% 50%;
+  z-index:2!important;
+  overflow:visible!important;
+  opacity:1!important;
+}
+.hero-sequence .scrub-frame{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  opacity:0;
+  pointer-events:none;
+  filter:drop-shadow(0 35px 90px rgba(23,71,255,.28));
+}
+.hero-sequence .scrub-frame:first-child{opacity:1}
+.hero-stage .hero-drive-orbit,
+.hero-stage .hero-orbit,
+.hero-stage .hero-v,
+.hero-stage .orbital-ring{display:none!important}
+
+/* Three layers: poster no longer competes with the real layers. */
+.layers-poster{opacity:0!important;pointer-events:none}
+.layers-art{overflow:visible!important}
+.plate{
+  opacity:1!important;
+  transform-origin:50% 50%!important;
+  filter:drop-shadow(0 24px 58px rgba(23,71,255,.18));
+}
+
+/* Remove stray character/statue backgrounds completely. */
+.difference-bust,
+.numbers-thinker{display:none!important}
+.difference .wrap,
+.numbers .wrap{isolation:isolate}
+.difference::before,
+.numbers::before{content:none!important}
+
+/* "Uma direção" should be a strong statement, not a giant billboard. */
+.big-statement{
+  font-size:clamp(72px,10vw,150px)!important;
+  line-height:.84!important;
+  letter-spacing:-.055em!important;
+  white-space:normal!important;
+  max-width:10ch;
+  margin-top:clamp(54px,7vw,105px)!important;
+}
+
+/* Method wheel: clear visual hierarchy and space for rotation. */
+.method-visual{overflow:visible!important}
+.method-sequence{
+  transform-origin:50% 50%!important;
+  width:min(92%,560px)!important;
+  aspect-ratio:1;
+}
+.method-sequence .scrub-frame{
+  filter:drop-shadow(0 28px 68px rgba(23,71,255,.20));
+}
+
+/* Challenge intro: no decorative graphic over text; keep clean Atlas-like space. */
+.challenge-motion{display:none!important}
+.challenges .split-heading{
+  position:relative;
+  z-index:2;
+}
+.challenges .split-heading .accent{
+  opacity:1!important;
+  color:inherit!important;
+}
+.challenge-grid{margin-top:clamp(30px,4vw,60px)!important}
+
+/* Readability: headings/copy never fade to ghost levels. */
+@media(prefers-reduced-motion:no-preference){
+  .challenges .split-heading,
+  .challenges .split-heading .accent,
+  .difference .split-heading,
+  .numbers-grid,
+  .method .split-heading,
+  .layer-copy{
+    opacity:1!important;
+  }
+  .challenge-card,
+  .solution-card,
+  .capability,
+  .steps li,
+  .faq details{
+    opacity:calc(.82 + var(--scene)*.18)!important;
+  }
+}
+
+/* Subtle premium hover interactions. */
+.solution-card,
+.challenge-card,
+.capability,
+.tab-list button,
+.steps li,
+.faq details{
+  transition:
+    transform .36s cubic-bezier(.16,1,.3,1),
+    box-shadow .36s cubic-bezier(.16,1,.3,1),
+    border-color .36s ease,
+    background .36s ease!important;
+}
+@media(hover:hover){
+  .solution-card:hover,
+  .challenge-card:hover{
+    transform:translate3d(0,-7px,0) scale(1.008)!important;
+    box-shadow:0 24px 70px rgba(5,24,72,.16),0 0 32px rgba(23,71,255,.08)!important;
+  }
+  .capability:hover{
+    transform:translate3d(0,-4px,0)!important;
+    border-color:rgba(0,216,255,.35)!important;
+    box-shadow:0 16px 40px rgba(0,80,255,.10),inset 0 0 24px rgba(0,216,255,.025)!important;
+  }
+  .tab-list button:hover{
+    transform:translateX(5px);
+    border-color:rgba(23,71,255,.28)!important;
+    box-shadow:0 10px 28px rgba(23,71,255,.07);
+  }
+  .steps li:hover{
+    transform:translateX(6px)!important;
+    background:rgba(23,71,255,.035);
+  }
+  .text-link:hover span,
+  .button:hover span,
+  .header-cta:hover span{
+    transform:translate3d(2px,-2px,0);
+  }
+}
+.text-link span,
+.button span,
+.header-cta span{transition:transform .28s cubic-bezier(.16,1,.3,1)}
+
+/* Mobile keeps one hero object and avoids crowding. */
+@media(max-width:900px){
+  .hero-sequence{
+    width:min(96vw,680px)!important;
+    right:-24vw!important;
+    top:47%!important;
+  }
+  .big-statement{font-size:clamp(64px,16vw,105px)!important;max-width:8ch}
+}
+@media(max-width:620px){
+  .hero-sequence{
+    width:112vw!important;
+    right:-39vw!important;
+    top:44%!important;
+  }
+  .big-statement{font-size:clamp(58px,17vw,88px)!important}
+}
