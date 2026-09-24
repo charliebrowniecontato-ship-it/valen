@@ -187,7 +187,7 @@ function paint(){
     if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.16}) translate3d(0,${hp*22}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
-      heroContent.style.opacity=String(1-clamp((hp-.68)/.32)*.76);
+      heroContent.style.opacity='1';
     }
   }
 
@@ -212,7 +212,7 @@ function paint(){
   if(difference&&diffBust){
     const dp=smooth(travel(difference,.94,.08));
     diffBust.style.transform=`translate3d(${(1-dp)*70}px,${(dp-.5)*-42}px,0) rotate(${4-dp*9}deg) scale(${.94+dp*.08})`;
-    diffBust.style.opacity=String(.035+Math.sin(dp*Math.PI)*.09);
+    diffBust.style.opacity=String(.07+Math.sin(dp*Math.PI)*.08);
   }
 
   /* numbers / owned visual asset */
@@ -221,7 +221,7 @@ function paint(){
     if(network)network.style.transform=`translate3d(${(1-np)*-42}px,${(1-np)*38}px,0) rotate(${-10+np*24}deg) scale(${.91+np*.09})`;
     if(thinker){
       thinker.style.transform=`translate3d(${(1-np)*75}px,${(np-.5)*-34}px,0) rotate(${5-np*9}deg) scale(${.92+np*.08})`;
-      thinker.style.opacity=String(.12+np*.28);
+      thinker.style.opacity=String(.20+np*.24);
     }
   }
 
@@ -241,7 +241,7 @@ function paint(){
     if(problemSeq)problemSeq.style.transform=`translate3d(${(1-cp)*50}px,${(cp-.5)*-28}px,0) rotate(${-5+cp*10}deg) scale(${.92+cp*.08})`;
     if(pulse){
       pulse.style.transform=`translate3d(${pointerNow.x*5}px,${(cp-.5)*-38+pointerNow.y*4}px,0) rotate(${cp*35}deg) scale(${.9+cp*.18})`;
-      pulse.style.opacity=String(.08+Math.sin(cp*Math.PI)*.22);
+      pulse.style.opacity=String(.14+Math.sin(cp*Math.PI)*.22);
     }
   }
 
