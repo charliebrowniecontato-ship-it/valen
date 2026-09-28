@@ -857,3 +857,32 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
   }
   .big-statement{font-size:clamp(58px,17vw,88px)!important}
 }
+
+/* Valen 2026: keep the approved composition, sharpen the official palette. */
+:root{--cyan:#00d8ff;--black:#050608}
+.button{background:#f7f6f2;background-size:auto;box-shadow:none;color:#06152d}
+.button:hover{background:#fff}
+.site-header nav,.header-cta{background:rgba(5,10,22,.94);border-color:rgba(255,255,255,.17)}
+.site-header nav a:hover,.site-header nav a[aria-current],.header-cta span{color:var(--cyan)}
+.overview-glow{background:radial-gradient(ellipse at 90% 0%,rgba(23,71,255,.52),rgba(5,6,8,0) 68%);opacity:1}
+.solution-card,.solution-card:nth-child(2){background:radial-gradient(ellipse at 95% 95%,rgba(23,71,255,.18),transparent 62%),#0b111e;border-color:rgba(180,212,244,.22)}
+.card-art{opacity:.55}
+.light-panel{background:linear-gradient(145deg,#f7f6f2 0%,#eef3ff 58%,#f7f6f2 100%)}
+.tab-list button[aria-selected=true]{background:#1747ff}
+.big-statement{background:linear-gradient(110deg,#fff 20%,#b9cbff 76%,#00d8ff);-webkit-background-clip:text;background-clip:text}
+.contact-card{background:radial-gradient(ellipse at 85% 12%,#3765d3 0%,#1747ff 48%,#07183c 100%)}
+.contact-button{box-shadow:0 0 calc(var(--gesture,0)*24px) rgba(0,216,255,.28)}
+
+/* Posters remain visible while the layered files load and on reduced motion. */
+.layers-poster{opacity:1!important}
+.layers-art.is-ready .layers-poster{opacity:0!important}
+@media(prefers-reduced-motion:reduce){
+  .layers-art.is-ready .layers-poster{opacity:1!important}
+}
+@media(max-width:900px){
+  .site-header{background:rgba(5,10,22,.96)}
+}
+@media(max-width:620px){
+  .contact-card{background:radial-gradient(ellipse at 85% 0%,#3765d3,#1747ff 45%,#07183c 100%)}
+  .copy-columns{grid-template-columns:1fr;gap:14px}
+}

@@ -97,6 +97,27 @@ const plateStory=$('.layers-story');
 const plateArt=$('.layers-art');
 const plates=$$('.plate');
 
+/* Keep the poster visible until every layer is usable. A missing image never
+   leaves an empty scene. Lazy images trigger this when the section is reached. */
+function revealCompleteArtwork(container,selector){
+  if(!container)return;
+  const images=$$(selector,container);
+  if(!images.length)return;
+  const check=()=>{
+    if(images.every(image=>image.complete&&image.naturalWidth>0)){
+      container.classList.add('is-ready');
+    }
+  };
+  images.forEach(image=>{
+    if(!image.complete){
+      image.addEventListener('load',check,{once:true});
+      image.addEventListener('error',check,{once:true});
+    }
+  });
+  check();
+}
+revealCompleteArtwork(plateArt,'.plate');
+
 const solutions=$('.solutions');
 const solutionsSeq=$('[data-sequence="solutions"]');
 
@@ -115,6 +136,7 @@ const challenges=$('.challenges');
 const contact=$('.contact');
 const statue=$('.contact-art');
 const contactArmSeq=$('[data-sequence="contact-arm"]');
+revealCompleteArtwork(statue,'.statue-body, .contact-arm-sequence .scrub-frame');
 
 const faq=$('.faq');
 const ribbon=$('.type-ribbon');
