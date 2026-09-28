@@ -889,3 +889,51 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
   .contact-card{background:radial-gradient(ellipse at 85% 0%,#3765d3,#1747ff 45%,#07183c 100%)}
   .copy-columns{grid-template-columns:1fr;gap:14px}
 }
+
+/* Mobile refinement: give the hero art and text their own breathing room. */
+@media(max-width:900px){
+  .overview,.difference,.numbers,.method,.ecosystem,.challenges,.faq{padding-top:76px;padding-bottom:76px}
+  .solutions{padding-top:72px;padding-bottom:80px}
+  .section-line,.split-heading{margin-bottom:38px}
+}
+@media(max-width:620px){
+  .site-header{top:12px;left:12px;right:12px;max-width:calc(100vw - 24px)}
+  .site-header .brand{width:118px;height:39px}
+  .site-header nav{top:62px}
+
+  .hero{height:auto;max-height:none;min-height:max(820px,100svh)}
+  .hero-content{height:auto;min-height:max(820px,100svh);padding:clamp(320px,48svh,400px) 0 44px;justify-content:flex-end}
+  .hero-sequence{width:min(89vw,420px)!important;right:-13vw!important;top:27%!important}
+  .hero-coordinate{display:none}
+  .hero h1{font-size:clamp(42px,11.5vw,56px)!important;line-height:1!important;letter-spacing:-.045em!important}
+  .hero-bottom{display:grid;grid-template-columns:1fr;gap:18px;margin-top:24px}
+  .hero-bottom p{font-size:16px!important;line-height:1.45!important;max-width:34ch!important}
+  .hero-bottom .button{width:100%;min-height:52px;justify-content:space-between}
+  .scroll-cue{display:none}
+
+  .overview-top h2,.split-heading h2,.numbers h2,.ecosystem h2,.challenges h2,.faq h2{font-size:clamp(38px,10vw,52px)!important;line-height:1!important}
+  .section-line h3{font-size:clamp(34px,9vw,46px)!important;line-height:1!important}
+  .layer-copy h3{font-size:clamp(39px,10vw,50px)!important;line-height:1!important}
+  .overview-copy .accent{font-size:23px}
+  .layers-story{padding:20px 0 65px}
+  .layers-art{width:min(100%,390px)}
+  .solution-card{min-height:auto!important;padding:24px!important}
+  .solution-card h3{font-size:clamp(29px,8vw,35px)!important}
+  .card-art{width:145px;right:-12px;top:-15px;opacity:.38}
+  .tab-list button{min-height:66px;padding:15px 18px!important}
+  .tab-list button>span{font-size:18px!important;line-height:1.15}
+  .tab-list button small{position:static;font-size:11px}
+  .capability-grid{gap:10px}
+  .capability{min-height:112px;padding:15px}
+  .capability h3{font-size:18px!important;overflow-wrap:normal}
+  .challenge-art{width:min(60%,230px);height:150px;margin-bottom:4px}
+  .challenge-card .eyebrow{margin-top:0;max-width:none}
+
+  .contact-card{min-height:860px;height:auto}
+  .contact-copy{padding:34px 24px 365px}
+  .contact-copy h2{font-size:clamp(40px,10.8vw,56px)!important;line-height:1!important}
+  .contact-copy>p:not(.eyebrow){font-size:17px;line-height:1.45;max-width:32ch}
+  .contact-copy .button{width:100%;min-height:52px;justify-content:space-between}
+  .contact-art{width:min(148vw,570px);left:calc(50% - min(74vw,285px));bottom:-125px}
+  .footer-contact{font-size:clamp(32px,9vw,42px)}
+}
