@@ -876,8 +876,11 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
 /* Posters remain visible while the layered files load and on reduced motion. */
 .layers-poster{opacity:1!important}
 .layers-art.is-ready .layers-poster{opacity:0!important}
+.contact-arm-sequence{visibility:hidden}
+.contact-art.is-ready .contact-arm-sequence{visibility:visible}
 @media(prefers-reduced-motion:reduce){
   .layers-art.is-ready .layers-poster{opacity:1!important}
+  .contact-art.is-ready .contact-arm-sequence{visibility:hidden}
 }
 @media(max-width:900px){
   .site-header{background:rgba(5,10,22,.96)}
