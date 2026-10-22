@@ -937,3 +937,118 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
   .contact-art{width:min(148vw,570px);left:calc(50% - min(74vw,285px));bottom:-125px}
   .footer-contact{font-size:clamp(32px,9vw,42px)}
 }
+
+
+/* === COMMERCIAL SHIP / 2026-10-21 ===
+   Preserve the Atlas-inspired motion system while making the offer clearer,
+   denser and more conversion-oriented. */
+:root{
+  --commercial-max:1320px;
+  --commercial-blue:#1747ff;
+  --commercial-cyan:#00d8ff;
+}
+.wrap{max-width:var(--commercial-max)}
+.hero h1{max-width:1080px!important}
+.hero-bottom p{max-width:610px!important}
+.overview-copy strong{color:#fff;font-weight:700}
+.light-panel .overview-copy strong{color:#071024}
+.copy-columns p{font-size:15px;line-height:1.6}
+.solution-card{min-height:600px!important}
+.solution-card>p{min-height:72px}
+.solution-card .tags{margin-top:4px}
+.solution-card .card-button{margin-top:auto}
+.solution-card h3{max-width:15ch!important}
+.difference .heading-copy{max-width:650px}
+.difference .heading-copy>p:not(.accent){max-width:54ch}
+.panel-copy p{font-size:16px;line-height:1.58}
+.numbers-right .accent{max-width:19ch}
+.stat-pair strong{font-variant-numeric:tabular-nums}
+.founder-note h3{margin-bottom:8px}
+.big-statement{max-width:12ch!important}
+.statement-caption{max-width:54ch}
+.ecosystem-grid>div:first-child>p:not(.eyebrow){max-width:49ch;line-height:1.6}
+.capability h3{line-height:1.05}
+.challenge-card>p{min-height:72px}
+.contact-copy>p:not(.eyebrow){max-width:38ch!important}
+.faq-list details p{max-width:70ch}
+
+/* Make service tags read as deliverables rather than decorative pills. */
+.tags span{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.14);
+  color:#dce7fb;
+}
+.solution-card:hover .tags span{
+  border-color:rgba(0,216,255,.25);
+}
+
+/* Stronger hierarchy in the light delivery section. */
+.difference.light-panel .eyebrow,
+.method.light-panel .eyebrow{color:#314361}
+.difference.light-panel .section-chip{
+  background:#071024;
+  color:#fff;
+}
+.tab-list button[aria-selected=true]{
+  box-shadow:0 14px 34px rgba(23,71,255,.18);
+}
+
+/* The start section now communicates a simple commercial entry model. */
+.numbers .stat-pair>div{
+  min-height:245px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+.numbers .stat-pair strong{line-height:.78!important}
+.numbers .stat-pair span{margin-top:20px}
+.numbers .network-art{opacity:.55}
+
+/* Keep copy fully legible while movement remains scroll-driven. */
+@media(prefers-reduced-motion:no-preference){
+  .overview-copy,
+  .solution-card,
+  .difference .heading-copy,
+  .difference-tabs,
+  .numbers-right,
+  .method .split-heading,
+  .ecosystem-grid>div:first-child,
+  .challenge-card,
+  .contact-copy,
+  .faq-list details{opacity:1!important}
+}
+
+/* Active navigation: useful feedback without turning the header into a dashboard. */
+.site-header nav a[aria-current="page"]{
+  color:#fff;
+}
+.site-header nav a[aria-current="page"]::after{
+  content:"";
+  display:block;
+  height:1px;
+  margin-top:5px;
+  background:linear-gradient(90deg,var(--commercial-blue),var(--commercial-cyan));
+}
+
+/* Mobile: shorter copy blocks, full-width CTAs and no cramped cards. */
+@media(max-width:900px){
+  .solution-card{min-height:auto!important}
+  .solution-card>p,.challenge-card>p{min-height:0}
+  .numbers .stat-pair>div{min-height:210px}
+}
+@media(max-width:620px){
+  .hero .eyebrow{max-width:28ch}
+  .hero h1{font-size:clamp(40px,10.8vw,54px)!important}
+  .overview-copy .accent{font-size:21px!important}
+  .copy-columns p{font-size:15px}
+  .solution-card .tags{margin-bottom:8px}
+  .difference .heading-copy .accent{font-size:25px}
+  .numbers .stat-pair{grid-template-columns:1fr 1fr!important}
+  .numbers .stat-pair>div{min-height:190px;padding:22px 16px!important}
+  .numbers .stat-pair strong{font-size:64px!important}
+  .numbers .stat-pair span{font-size:11px}
+  .numbers .stat-pair p{font-size:13px}
+  .big-statement{font-size:clamp(52px,14vw,76px)!important;max-width:10ch!important}
+  .capability h3{font-size:17px!important}
+  .contact-copy small{max-width:32ch}
+}
