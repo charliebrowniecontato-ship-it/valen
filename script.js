@@ -294,3 +294,26 @@ if(hero){
 }
 
 measureAll();
+
+
+/* commercial UX: active section nav + one-open FAQ */
+(() => {
+  const links = $$('#main-nav a[href^="#"]');
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window && sections.length) {
+    const navObserver = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio-a.intersectionRatio)[0];
+      if (!visible) return;
+      links.forEach(a => a.removeAttribute('aria-current'));
+      const active = links.find(a => a.getAttribute('href') === '#' + visible.target.id);
+      if (active) active.setAttribute('aria-current','page');
+    }, {rootMargin:'-28% 0px -58% 0px', threshold:[0,.1,.25,.5]});
+    sections.forEach(section => navObserver.observe(section));
+  }
+
+  const faqItems = $$('.faq-list details');
+  faqItems.forEach(item => item.addEventListener('toggle', () => {
+    if (!item.open) return;
+    faqItems.forEach(other => { if (other !== item) other.open = false; });
+  }));
+})();
