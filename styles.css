@@ -1072,3 +1072,22 @@ h1,h2,h3{font-kerning:normal;text-wrap:balance}
 .about-valen-copy .button{margin-top:26px;background:#1747ff;color:#fff}
 @media(max-width:900px){.about-valen-grid{grid-template-columns:1fr}.about-valen-copy{padding-top:0}.about-valen-facts strong{font-size:26px}}
 @media(max-width:620px){.about-valen h2{font-size:clamp(40px,10vw,60px)}.about-valen-facts strong{font-size:19px}.about-valen-facts span{font-size:10px}.about-valen-facts>div+div{padding-left:9px}.about-valen .button{white-space:normal}}
+
+/* Final Atlas-style visual QA */
+.hero-sequence[hidden]{display:none!important}
+.hero-symbol-assembly{position:absolute;z-index:3;right:2vw;top:50%;width:min(59vw,820px);aspect-ratio:1;transform:translateY(-50%);pointer-events:none;display:grid;place-items:center}
+.hero-symbol-assembly img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.hero-fixed-v{z-index:2;filter:drop-shadow(0 24px 70px #1747ff66)}
+.hero-rotating-orbit{z-index:1;will-change:transform;filter:drop-shadow(0 20px 60px #00d8ff44)}
+.site-header,body.has-scrolled .site-header{background:transparent!important;box-shadow:none!important;border-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.site-header::before,.site-header::after{background:transparent!important;box-shadow:none!important}
+#main-nav{border-radius:999px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(4,10,24,.82);border:1px solid rgba(198,220,255,.19);padding:8px 17px}
+.brand-link .brand,.footer .brand{overflow:visible!important;min-width:115px}
+.brand-link img,.footer .brand img{object-fit:contain!important;object-position:center!important;max-height:65px!important;max-width:160px!important}
+.difference .tab-panels [role="tabpanel"]{overflow:hidden;isolation:isolate}
+.difference .difference-art{object-fit:contain!important;max-width:88%!important;max-height:55%!important;inset:0 3% auto auto!important;transform:none!important}
+.difference .panel-copy{position:relative;z-index:3}
+.numbers .numbers-right{display:flex;flex-direction:column;justify-content:center;gap:32px}
+@media(max-width:900px){.hero-symbol-assembly{width:95vw;right:-22vw;top:46%}#main-nav{border-radius:18px}}
+@media(max-width:620px){.hero-symbol-assembly{width:113vw;right:-38vw;top:44%}.difference .difference-art{max-height:46%!important;max-width:90%!important}}
+@media(prefers-reduced-motion:reduce){.hero-rotating-orbit{transform:none!important}}
