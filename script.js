@@ -91,6 +91,7 @@ const hero=$('.hero');
 const heroSeq=$('[data-sequence="hero"]');
 const heroContent=$('.hero-content');
 const heroHalo=$('.hero-halo');
+const heroOrbitOnly=$('.hero-rotating-orbit');
 
 const overview=$('.overview');
 const plateStory=$('.layers-story');
@@ -192,11 +193,9 @@ function paint(){
     const hg=geo.get(hero);
     const hp=hg?clamp(y/Math.max(1,hg.height*.88)):0; root.style.setProperty('--hero-p',smooth(hp).toFixed(4));
     const hScene=smooth(clamp(hp/.88));
-    renderSequence(heroSeq,hScene);
+    // Keep the V fixed; only the surrounding orbit reacts to scroll.
     const inert=Math.max(-1,Math.min(1,velocity/135));
-    if(heroSeq){
-      heroSeq.style.transform=`translate3d(${pointerNow.x*12+inert*3}px,calc(-50% + ${hp*34+pointerNow.y*9}px),0) rotate(${-7+hp*112+inert*1.4}deg) scale(${.96+Math.sin(hp*Math.PI)*.08})`;
-    }
+    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*320}deg)`;
     if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.12}) translate3d(0,${hp*18}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
