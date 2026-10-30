@@ -1180,3 +1180,33 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance}
 .contact-art::before{z-index:0}
 .whatsapp .float-cta-icon{display:grid;place-items:center;font-size:30px;font-family:Arial,sans-serif;font-weight:400;line-height:1}
 .whatsapp svg{display:none}
+
+
+/* V4.1 production refinement: clarity, contrast, accessible interaction */
+:root{--brand-blue:#1747ff;--brand-cyan:#00d8ff;--brand-paper:#f7f6f2}
+html{scroll-padding-top:100px}
+a,button,summary{touch-action:manipulation}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #00d8ff!important;outline-offset:4px}
+.light-panel .heading-copy p,.light-panel .panel-copy p,.about-valen-copy p{color:#343e50!important}
+.light-panel .accent,.light-panel .accent span{color:#1c2840!important}
+.light-panel .eyebrow{color:#1747ff!important}
+.difference .tab-list button{min-height:72px;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease!important}
+.difference .tab-list button:hover,.difference .tab-list button:focus-visible{border-color:#1747ff!important;box-shadow:0 6px 24px rgba(23,71,255,.14)}
+.difference [role="tabpanel"][hidden]{display:none!important}
+.difference .panel-copy{opacity:1!important}
+.difference .difference-art{pointer-events:none;object-fit:contain!important}
+.capability,.solution-card .button,.challenge-card .text-link{cursor:pointer}
+.capability{position:relative;text-decoration:none}
+.capability:focus-visible{outline:3px solid #00d8ff!important}
+.capability i{font-style:normal;transition:transform .28s ease}
+.capability:hover i,.capability:focus-visible i{transform:translate(3px,-3px)}
+.solution-card .button,.challenge-card .text-link{position:relative;z-index:4}
+.type-ribbon{overflow:hidden;contain:paint}
+.type-ribbon>div{will-change:transform}
+.contact-art{pointer-events:none}
+.contact-art .statue-body,.contact-art .contact-arm-sequence{display:none!important}
+.contact-card .contact-art::after{content:"";position:absolute;z-index:3;left:38%;top:31%;width:10%;height:3%;border-radius:100%;background:rgba(0,216,255,.24);filter:blur(9px);box-shadow:0 0 32px rgba(0,216,255,.28);pointer-events:none}
+.footer-info a,.footer-columns nav a{min-height:38px;display:inline-flex;align-items:center}
+@media(prefers-reduced-motion:reduce){.type-ribbon>div,.hero-rotating-orbit,.method-sequence,.plate,.reveal{transform:none!important;transition:none!important;animation:none!important;opacity:1!important}}
+@media(max-width:900px){.contact-art .statue-poster{object-fit:contain!important}.hero-symbol-assembly{max-width:88vw}}
+@media(max-width:620px){.hero-symbol-assembly{max-width:none}.difference .tab-list button{min-height:68px}.difference .panel-copy{padding-bottom:18px}}
