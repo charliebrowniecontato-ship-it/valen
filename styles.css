@@ -1210,3 +1210,54 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #00
 @media(prefers-reduced-motion:reduce){.type-ribbon>div,.hero-rotating-orbit,.method-sequence,.plate,.reveal{transform:none!important;transition:none!important;animation:none!important;opacity:1!important}}
 @media(max-width:900px){.contact-art .statue-poster{object-fit:contain!important}.hero-symbol-assembly{max-width:88vw}}
 @media(max-width:620px){.hero-symbol-assembly{max-width:none}.difference .tab-list button{min-height:68px}.difference .panel-copy{padding-bottom:18px}}
+
+
+/* Valen final — consistent brand tokens, elliptical navigation and compact hero */
+:root{--valen-blue:#1747ff;--blue:var(--valen-blue);--cyan:var(--valen-blue)}
+.site-header{left:50%;right:auto;top:18px;transform:translateX(-50%);width:min(1180px,calc(100% - 32px));display:flex;justify-content:center;gap:0;border-radius:999px;background:#06152df5;border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);padding:8px 22px;min-height:68px;box-shadow:0 14px 40px #0003}
+.site-header>.brand-link,.site-header>.header-cta{display:none!important}
+.site-header nav{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;box-shadow:none;padding:0;gap:clamp(8px,1.6vw,26px)}
+.site-header nav a{font-size:clamp(11px,.9vw,13px);color:#fff}
+.site-header nav .nav-brand{flex:0 0 124px;display:flex;align-items:center;justify-content:center;min-width:0;height:48px;overflow:hidden}
+.site-header nav .nav-brand img{width:112px;height:48px;object-fit:contain;mix-blend-mode:screen}
+.site-header nav .nav-brand:focus-visible{outline-offset:2px}
+.reading-progress{top:auto;bottom:0;left:22px;right:22px;border-radius:3px}
+.hero-content{justify-content:center;padding-top:120px;padding-bottom:0}
+.hero h1{font-size:clamp(72px,9.7vw,152px)}
+.hero-bottom{margin-top:30px}
+.hero-symbol-assembly{width:min(40vw,570px)!important;right:9vw!important}
+.hero-symbol-assembly .hero-fixed-v{animation:valenVGlow 4.8s ease-in-out infinite;transform:none!important}
+.hero-coordinate{display:none!important}
+.layer-key{display:none!important}
+.hero .eyebrow{font-size:11px}
+@keyframes valenVGlow{0%,100%{filter:drop-shadow(0 0 20px rgba(23,71,255,.22)) brightness(1)}50%{filter:drop-shadow(0 0 42px rgba(23,71,255,.48)) brightness(1.09)}}
+.capability-grid{position:relative}
+.capability-grid>.capability{font:inherit;color:inherit;text-align:left;cursor:pointer;border:0;background:transparent;width:100%;font-family:var(--body)}
+.capability-grid>.capability:hover,.capability-grid>.capability:focus-visible{background:rgba(23,71,255,.09)}
+.capability-grid.is-expanded>.capability{display:none}
+.capability-detail{grid-column:1/-1;width:100%;position:relative;min-height:330px;border:1px solid rgba(23,71,255,.25);background:linear-gradient(135deg,rgba(23,71,255,.13),rgba(0,0,0,.1));border-radius:22px;padding:clamp(24px,4vw,65px);animation:capExpand .4s cubic-bezier(.22,1,.36,1) both}
+.capability-detail[hidden]{display:none!important}
+.capability-detail h3{font-size:clamp(30px,3.5vw,56px);max-width:720px;margin:8px 0 16px}
+.capability-detail p{font-size:17px;max-width:720px;margin-bottom:20px}
+.capability-detail ul{padding-left:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px 35px;margin:22px 0 30px}
+.capability-detail li{font-size:14px}
+.capability-close{position:absolute;right:25px;top:20px;border:1px solid currentColor;border-radius:50%;width:43px;height:43px;background:transparent;color:inherit;font-size:28px;line-height:1}
+@keyframes capExpand{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+.contact-art .statue-poster{animation:valenEnergy 3.6s ease-in-out infinite}
+.contact-card .contact-art::after{animation:valenEnergy 2s ease-in-out infinite}
+@keyframes valenEnergy{0%,100%{filter:drop-shadow(0 0 9px rgba(23,71,255,.12))}50%{filter:drop-shadow(0 0 25px rgba(23,71,255,.36))}}
+@media(max-width:900px){
+ .site-header{width:calc(100% - 20px);left:10px;top:10px;transform:none;justify-content:space-between;padding:8px 15px;min-height:58px;border-radius:28px}
+ .site-header>.brand-link{display:block!important;order:0}
+ .site-header>.brand-link .brand{height:37px;width:106px}
+ .site-header>.menu-toggle{display:flex!important;order:1}
+ .site-header nav{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;width:100%;background:#06152d;border:1px solid #ffffff22;border-radius:20px;flex-direction:column;padding:18px;gap:16px}
+ .site-header nav.is-open{display:flex}
+ .site-header nav .nav-brand{display:none}
+ .hero-content{padding-top:108px;padding-bottom:40px}
+ .hero h1{font-size:clamp(54px,13vw,105px)}
+ .hero-symbol-assembly{width:78vw!important;right:-21vw!important;top:44%!important}
+ .capability-detail ul{grid-template-columns:1fr}
+}
+@media(max-width:620px){.hero-symbol-assembly{width:94vw!important;right:-30vw!important;top:45%!important}}
+@media(prefers-reduced-motion:reduce){.hero-symbol-assembly .hero-fixed-v,.contact-art .statue-poster,.contact-card .contact-art::after,.capability-detail{animation:none!important}}
