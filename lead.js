@@ -1,1 +1,35 @@
-'use strict';const form=document.querySelector('#lead-form');if(form)form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const d=new FormData(form),v=k=>String(d.get(k)||'').trim().slice(0,150),digits=v('telefone').replace(/\D/g,'');const status=document.querySelector('#form-status');if(digits.length<10||digits.length>13){status.textContent='Informe um WhatsApp válido com DDD.';return}const msg=['Olá, gostaria de solicitar um diagnóstico comercial da Valen.','Nome: '+v('nome'),'E-mail: '+v('email'),'Empresa: '+v('empresa'),'WhatsApp: '+v('telefone'),'Faturamento: '+v('faturamento'),'Segmento: '+v('segmento')].join('\n');status.textContent='Revise e envie a mensagem na tela do WhatsApp.';window.location.href='https://wa.me/558487149954?text='+encodeURIComponent(msg)});
+'use strict';
+const form=document.querySelector('#lead-form');
+if(form){
+ const status=document.querySelector('#form-status');
+ const submit=form.querySelector('[type="submit"]');
+ const fields=['nome','email','empresa','telefone','faturamento','segmento'];
+ const collect=()=>{
+   const data=new FormData(form);
+   return Object.fromEntries(fields.map(k=>[k,String(data.get(k)||'').trim().slice(0,150)]));
+ };
+ const summary=()=>{const d=collect();return [
+  'Solicitação de diagnóstico comercial — Valen',
+  'Nome: '+d.nome,'E-mail: '+d.email,'Empresa: '+d.empresa,
+  'WhatsApp: '+d.telefone,'Faturamento mensal: '+d.faturamento,
+  'Segmento: '+d.segmento
+ ].join('\n')};
+ document.querySelector('#copy-lead')?.addEventListener('click',async()=>{
+  if(!form.reportValidity())return;
+  try{await navigator.clipboard.writeText(summary());status.textContent='Dados copiados. O envio à Valen ainda não foi realizado.'}
+  catch{status.textContent='Não foi possível copiar automaticamente; selecione e copie os dados manualmente.'}
+ });
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();if(!form.reportValidity())return;
+  const lead=collect();const phone=lead.telefone.replace(/\D/g,'');
+  if(phone.length<10||phone.length>13){status.textContent='Informe um WhatsApp válido com DDD.';return}
+  if(form.elements.website?.value)return;
+  submit.disabled=true;status.textContent='Verificando o canal de contato...';
+  try{
+   const res=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...lead,consentimento:form.elements.consentimento.checked})});
+   if(!res.ok){status.textContent=res.status===503?'O canal de e-mail está em configuração. Você pode copiar os dados, mas a solicitação ainda não foi enviada.':'Não foi possível enviar. Tente novamente.';return}
+   status.textContent='Solicitação enviada. A equipe poderá responder pelo contato informado.';form.reset();
+  }catch{status.textContent='Falha de conexão. Nenhuma confirmação de envio foi recebida.'}
+  finally{submit.disabled=false}
+ });
+}
