@@ -195,7 +195,8 @@ function paint(){
     const hScene=smooth(clamp(hp/.88));
     // Keep the V fixed; only the surrounding orbit reacts to scroll.
     const inert=Math.max(-1,Math.min(1,velocity/135));
-    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*135}deg)`;
+    const orbitMotion=$('.orbit-motion');
+    if(orbitMotion)orbitMotion.style.transform=`rotate(${hp*290}deg)`;
     if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.12}) translate3d(0,${hp*18}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
@@ -247,7 +248,7 @@ function paint(){
   /* ribbon */
   if(ribbon){
     const rp=travel(ribbon,.98,.02);
-    ribbon.style.setProperty('--ribbon-x',`${-2-rp*3}%`);
+    ribbon.style.setProperty('--ribbon-x',`${-2-rp*12}%`);
   }
 }
 
