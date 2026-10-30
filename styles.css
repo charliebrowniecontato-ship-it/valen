@@ -1359,3 +1359,40 @@ main,section{min-width:0}
  .challenge-card{padding:27px!important}
 }
 @media(prefers-reduced-motion:reduce){.orbit-dot,.solution-card .card-art,.solutions .section-line .button span,.solution-card .button span,.contact-art:before{animation:none!important}}
+
+
+/* 2026-10-30 — Final visual safe-area refinements */
+@media (min-width: 1101px) {
+  .hero-symbol-assembly { top: 23% !important; transform: translateY(12px); }
+}
+@media (min-width: 901px) and (max-width:1100px) {
+  .hero-symbol-assembly { top: 25% !important; transform: translateY(8px); }
+}
+.solution-card, .challenge-card { position: relative; overflow: hidden; }
+.solution-card .card-art, .challenge-card .challenge-art {
+  max-width: 104px !important; max-height: 104px !important;
+  width: 104px !important; height: 104px !important;
+  object-fit: contain; top: 28px !important; right: 28px !important;
+  transform-origin: center; animation: cardFloatSafe 4.8s ease-in-out infinite !important;
+}
+@keyframes cardFloatSafe {
+  0%,100% { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(0,-6px,0) rotate(1deg); }
+}
+@media(max-width:900px) {
+  .hero-symbol-assembly { top: 50% !important; }
+  .solution-card .card-art, .challenge-card .challenge-art {
+    width: 80px !important; height: 80px !important;
+    top: 22px !important; right: 22px !important;
+  }
+}
+@media(max-width:480px) {
+  .hero-symbol-assembly { top: 51% !important; }
+  .solution-card .card-art, .challenge-card .challenge-art {
+    width: 72px !important; height: 72px !important;
+    top: 20px !important; right: 20px !important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+ .solution-card .card-art, .challenge-card .challenge-art { animation: none !important; }
+}
