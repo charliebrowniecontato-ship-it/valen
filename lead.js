@@ -3,6 +3,12 @@ const form=document.querySelector('#lead-form');
 if(form){
  const status=document.querySelector('#form-status');
  const submit=form.querySelector('[type="submit"]');
+ submit.disabled=true;
+ status.textContent='Verificando disponibilidade do contato por e-mail...';
+ fetch('/api/lead',{method:'GET'}).then(r=>r.json()).then(config=>{
+   submit.disabled=!config.configured;
+   status.textContent=config.configured?'Canal de envio disponível.':'O envio por e-mail está em configuração. Você pode copiar seus dados; nada será enviado automaticamente.';
+ }).catch(()=>{submit.disabled=true;status.textContent='Não foi possível verificar o canal de envio por e-mail.'});
  const fields=['nome','email','empresa','telefone','faturamento','segmento'];
  const collect=()=>{
    const data=new FormData(form);
