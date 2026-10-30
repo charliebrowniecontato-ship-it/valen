@@ -311,3 +311,35 @@ measureAll();
     faqItems.forEach(other => { if (other !== item) other.open = false; });
   }));
 })();
+
+/* In-place expansion of the three main service cards */
+(() => {
+ const grid=document.getElementById('capability-grid');
+ const detail=document.getElementById('capability-detail');
+ if(!grid||!detail)return;
+ const cards=[...grid.querySelectorAll('[data-capability]')];
+ const entries=[
+ ['01 / ESTRUTURAR','Diagnóstico e jornada comercial','Mapeamos as etapas da venda, identificamos perdas e definimos um próximo movimento comercial mais claro.',['Diagnóstico 360° da operação','Mapeamento da jornada comercial','Critérios de qualificação e pontos de perda','Plano de prioridades']],
+ ['02 / IMPLEMENTAR','Processos, CRM e automações','Estruturamos a rotina do time comercial para que oportunidades avancem com acompanhamento.',['Pipeline e etapas de venda','Cadências, scripts e playbooks','Configuração e organização do CRM','Automações alinhadas ao processo']],
+ ['03 / ACOMPANHAR','Execução, indicadores e gestão','Conectamos operação e acompanhamento para que o time tenha visibilidade sobre o que funciona.',['Acompanhamento da execução comercial','Indicadores e dashboards','Rotinas de gestão e melhoria contínua','Ajustes orientados por dados']]
+ ];
+ let last=null;
+ function close(){
+   grid.classList.remove('is-expanded');detail.hidden=true;
+   cards.forEach(b=>b.setAttribute('aria-expanded','false'));
+   if(last)last.focus({preventScroll:true});
+ }
+ cards.forEach((button,i)=>button.addEventListener('click',()=>{
+   last=button;const [k,t,d,points]=entries[i];
+   document.getElementById('capability-kicker').textContent=k;
+   document.getElementById('capability-title').textContent=t;
+   document.getElementById('capability-text').textContent=d;
+   document.getElementById('capability-points').replaceChildren(...points.map(s=>{const li=document.createElement('li');li.textContent=s;return li}));
+   cards.forEach(b=>b.setAttribute('aria-expanded',String(b===button)));
+   detail.hidden=false;grid.classList.add('is-expanded');
+   detail.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'center'});
+   detail.querySelector('.capability-close').focus({preventScroll:true});
+ }));
+ detail.querySelector('.capability-close').addEventListener('click',close);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden)close()});
+})();
