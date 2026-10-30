@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://valen-eta-nine.vercel.app/</loc><lastmod>2026-10-25</lastmod><priority>1.0</priority></url><url><loc>https://valen-eta-nine.vercel.app/entregaveis</loc><lastmod>2026-10-25</lastmod><priority>0.8</priority></url><url><loc>https://valen-eta-nine.vercel.app/diagnostico</loc><lastmod>2026-10-25</lastmod><priority>0.8</priority></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.valengrupo.com.br/</loc><lastmod>2026-10-30</lastmod><priority>1.0</priority></url>
+  <url><loc>https://www.valengrupo.com.br/entregaveis</loc><lastmod>2026-10-30</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.valengrupo.com.br/diagnostico</loc><lastmod>2026-10-30</lastmod><priority>0.8</priority></url>
+</urlset>
