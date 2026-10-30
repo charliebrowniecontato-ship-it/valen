@@ -1298,3 +1298,64 @@ main,section{min-width:0}
  .contact-card{overflow:hidden}
  .contact-copy h2{font-size:clamp(35px,10vw,48px)!important}
 }
+
+
+/* Final UI pass — hero separation, motion, readability, responsive */
+:root{--valen-primary:#1747ff;--blue:var(--valen-primary);--cyan:var(--valen-primary);--brand-blue:var(--valen-primary);--brand-cyan:var(--valen-primary)}
+.hero-content{align-items:flex-start;justify-content:center;padding-bottom:105px;padding-top:100px}
+.hero h1{font-size:clamp(60px,7.4vw,116px)!important;line-height:1.01;letter-spacing:-.022em;width:min(60%,810px);max-width:min(60%,810px);position:relative;z-index:3}
+.hero h1 em{font-size:1em;color:var(--valen-primary)!important}
+.hero-bottom{margin-top:31px}
+.hero-bottom>p{max-width:530px}
+.hero-symbol-assembly{width:min(39vw,530px)!important;right:4vw!important;top:15%!important;isolation:isolate}
+.hero-symbol-assembly .hero-fixed-v{z-index:2}
+.hero-symbol-assembly .orbit-motion{position:absolute;inset:0;z-index:1;transform-origin:50% 50%;will-change:transform}
+.hero-symbol-assembly .orbit-motion img{width:100%!important;height:100%!important;max-width:none;inset:0!important;position:absolute!important;transform:none!important}
+.orbit-dot{position:absolute;width:25px;height:25px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 8%,#8ca5ff 21%,#1747ff 53%,#071f8b 81%);box-shadow:0 0 19px #1747ff88;z-index:3;animation:orbitSelf 1.8s linear infinite}
+.orbit-dot-one{left:9%;top:43%}.orbit-dot-two{right:9%;bottom:40%;animation-direction:reverse;animation-duration:2.5s}
+@keyframes orbitSelf{to{transform:rotate(360deg)}}
+.hero-diagnosis{position:absolute;z-index:6;top:75%;right:clamp(40px,11vw,190px);min-width:215px;box-shadow:0 14px 38px rgba(0,0,0,.27);justify-content:center}
+.hero-diagnosis span{margin-left:12px}
+.solutions-motion{filter:drop-shadow(0 15px 30px rgba(23,71,255,.24))}
+.solutions-motion .scrub-frame{transition:opacity .12s linear}
+.solutions .section-line .button span,.solution-card .button span{display:inline-block;animation:arrowGlide 1.7s ease-in-out infinite}
+@keyframes arrowGlide{0%,100%{transform:translateX(-4px)}50%{transform:translateX(6px)}}
+.solution-card .card-art{animation:cardFloat 5s ease-in-out infinite;filter:drop-shadow(0 10px 24px rgba(23,71,255,.14))}
+.solution-card:nth-child(2) .card-art{animation-delay:-1.5s}
+.solution-card:nth-child(3) .card-art{animation-delay:-3s}
+@keyframes cardFloat{50%{transform:translateY(-9px) rotate(1.5deg)}}
+.type-ribbon{position:relative;overflow:hidden;min-height:125px}
+.type-ribbon:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,#030609 0%,transparent 5%,transparent 95%,#030609 100%)}
+.type-ribbon>div{text-shadow:0 3px 8px rgba(0,0,0,.85),0 0 13px rgba(23,71,255,.4);white-space:nowrap}
+.challenge-card{padding:clamp(28px,3.3vw,52px)!important}
+.challenge-card .eyebrow{display:block;margin-top:15px}
+.challenge-card h3{margin-top:16px;line-height:1.08}
+.challenges .accent span,.lead-teaser em,.contact-copy em{color:var(--valen-primary)!important}
+.contact-art{isolation:isolate}
+.contact-art:before{animation:energyVeins 2.2s ease-in-out infinite!important;mix-blend-mode:screen}
+.contact-card .contact-art:after{background:rgba(23,71,255,.3)!important;box-shadow:0 0 23px rgba(23,71,255,.55),0 0 46px rgba(23,71,255,.2)!important}
+@keyframes energyVeins{0%,100%{opacity:.2;transform:translateY(7px) scale(.96)}50%{opacity:.72;transform:translateY(-10px) scale(1.04)}}
+@media(max-width:1100px){.hero h1{font-size:clamp(52px,7vw,85px)!important}.hero-symbol-assembly{right:-1vw!important}}
+@media(max-width:900px){
+ .hero{min-height:100svh!important}
+ .hero-content{justify-content:flex-start!important;padding:118px 0 210px!important;min-height:100svh!important}
+ .hero h1{font-size:clamp(34px,8.35vw,70px)!important;max-width:100%!important;width:100%!important;letter-spacing:-.03em!important;overflow-wrap:normal!important}
+ .hero-symbol-assembly{width:62vw!important;right:-10vw!important;top:47%!important;opacity:.56!important}
+ .hero-diagnosis{top:auto;bottom:65px;right:18px;left:18px;min-width:0;max-width:360px;margin:0 auto}
+ .hero-bottom{margin-top:23px;max-width:75%}
+ .hero-bottom p{max-width:100%}
+ .orbit-dot{width:17px;height:17px}
+ .challenge-card{padding:30px!important}
+ .type-ribbon{min-height:100px}
+ .type-ribbon>div{font-size:clamp(44px,10vw,76px)!important}
+ .solutions-motion{max-width:100%;overflow:hidden}
+}
+@media(max-width:480px){
+ .hero-content{padding-top:118px!important;padding-bottom:200px!important}
+ .hero h1{font-size:clamp(29px,8.15vw,41px)!important}
+ .hero-symbol-assembly{width:73vw!important;right:-17vw!important;top:48%!important}
+ .hero-bottom{max-width:75%;font-size:14px}
+ .hero-diagnosis{bottom:40px;font-size:13px}
+ .challenge-card{padding:27px!important}
+}
+@media(prefers-reduced-motion:reduce){.orbit-dot,.solution-card .card-art,.solutions .section-line .button span,.solution-card .button span,.contact-art:before{animation:none!important}}
