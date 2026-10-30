@@ -2,7 +2,8 @@
 module.exports=async function handler(req,res){
  res.setHeader('Cache-Control','no-store');
  res.setHeader('X-Content-Type-Options','nosniff');
- if(req.method!=='POST'){res.setHeader('Allow','POST');return res.status(405).json({error:'Método inválido'})}
+ if(req.method==='GET')return res.status(200).json({configured:Boolean(process.env.RESEND_API_KEY&&process.env.VALEN_CONTACT_EMAIL&&process.env.VALEN_SENDER_EMAIL)});
+ if(req.method!=='POST'){res.setHeader('Allow','GET, POST');return res.status(405).json({error:'Método inválido'})}
  const key=process.env.RESEND_API_KEY;
  const to=process.env.VALEN_CONTACT_EMAIL;
  const from=process.env.VALEN_SENDER_EMAIL;
