@@ -195,7 +195,7 @@ function paint(){
     const hScene=smooth(clamp(hp/.88));
     // Keep the V fixed; only the surrounding orbit reacts to scroll.
     const inert=Math.max(-1,Math.min(1,velocity/135));
-    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*175}deg)`;
+    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*135}deg)`;
     if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.12}) translate3d(0,${hp*18}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
@@ -247,7 +247,7 @@ function paint(){
   /* ribbon */
   if(ribbon){
     const rp=travel(ribbon,.98,.02);
-    ribbon.style.setProperty('--ribbon-x',`${-3-rp*6}%`);
+    ribbon.style.setProperty('--ribbon-x',`${-2-rp*3}%`);
   }
 }
 
@@ -257,7 +257,7 @@ function tick(time){
   const dt=last?Math.min(time-last,50):16.7;
   last=time;
   const before=y;
-  const alpha=1-Math.exp(-dt/62);
+  const alpha=1-Math.exp(-dt/82);
   y+=(target-y)*alpha;
   velocity=(y-before)/Math.max(1,dt)*1000;
   pointerNow.x+=(pointer.x-pointerNow.x)*alpha;
@@ -277,7 +277,7 @@ reduced.addEventListener('change',()=>{root.classList.toggle('js-motion',!reduce
 desktop.addEventListener('change',measureAll);
 if('ResizeObserver'in window)new ResizeObserver(measureAll).observe(document.body);
 
-if(hero){
+if(hero && matchMedia('(hover:hover) and (pointer:fine)').matches){
   hero.addEventListener('pointermove',e=>{
     if(e.pointerType!=='mouse'||reduced.matches)return;
     const r=hero.getBoundingClientRect();
