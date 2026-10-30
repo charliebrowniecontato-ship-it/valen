@@ -137,7 +137,7 @@ const challenges=$('.challenges');
 const contact=$('.contact');
 const statue=$('.contact-art');
 const contactArmSeq=$('[data-sequence="contact-arm"]');
-revealCompleteArtwork(statue,'.statue-body, .contact-arm-sequence .scrub-frame');
+// Contact artwork intentionally static in V4: no arm frame decoding required.
 
 const faq=$('.faq');
 const ribbon=$('.type-ribbon');
@@ -195,7 +195,7 @@ function paint(){
     const hScene=smooth(clamp(hp/.88));
     // Keep the V fixed; only the surrounding orbit reacts to scroll.
     const inert=Math.max(-1,Math.min(1,velocity/135));
-    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*320}deg)`;
+    if(heroOrbitOnly)heroOrbitOnly.style.transform=`rotate(${hp*175}deg)`;
     if(heroHalo)heroHalo.style.transform=`scale(${1+hp*.12}) translate3d(0,${hp*18}px,0)`;
     if(heroContent){
       heroContent.style.transform=`translate3d(0,${-hp*44}px,0)`;
@@ -241,18 +241,13 @@ function paint(){
   /* contact: pinned body + 5-state arm sequence */
   if(contact&&statue){
     const cp=smooth(desktop.matches?pin(contact):travel(contact,.95,.06));
-    renderSequence(contactArmSeq,cp);
-    const enter=smooth(clamp(cp/.68));
-    const leave=smooth(clamp((cp-.9)/.1));
-    statue.style.transform=`translate3d(${-10*(1-enter)+4*leave}%,${12*(1-enter)+8*leave}%,0) scale(${.93+enter*.07})`;
-    if(contactArmSeq)contactArmSeq.style.transform=`translate3d(${pointerNow.x*4}px,${pointerNow.y*4}px,0)`;
-    contact.style.setProperty('--gesture',enter.toFixed(4));
+    contact.style.setProperty('--gesture',cp.toFixed(4));
   }
 
   /* ribbon */
   if(ribbon){
     const rp=travel(ribbon,.98,.02);
-    ribbon.style.setProperty('--ribbon-x',`${-3-rp*18}%`);
+    ribbon.style.setProperty('--ribbon-x',`${-3-rp*6}%`);
   }
 }
 
