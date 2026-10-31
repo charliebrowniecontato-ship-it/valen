@@ -1473,3 +1473,82 @@ main,section{min-width:0}
 @media(prefers-reduced-motion:reduce){
  .hero-symbol-assembly .valen-orbit-track,.valen-orbit-track .orbit-planet i{animation:none!important}
 }
+
+/* 2026-10-31 mobile layout stabilization — screenshots review */
+.hero-symbol-assembly .valen-orbit-track{
+ border:5px solid rgba(58,152,255,.88)!important;
+ background:transparent;
+ box-shadow:0 0 5px #70bdff,0 0 22px rgba(40,112,255,.75),inset 0 0 11px rgba(37,114,255,.34)!important;
+}
+.site-header{z-index:1000!important}
+@media(max-width:900px){
+ body .site-header{
+   position:fixed!important;top:12px!important;left:50%!important;right:auto!important;
+   transform:translateX(-50%)!important;width:calc(100% - 32px)!important;
+   max-width:480px!important;min-height:60px!important;height:60px!important;
+   padding:8px 16px!important;display:flex!important;align-items:center!important;
+   justify-content:space-between!important;gap:12px!important;
+   background:rgba(5,12,27,.94)!important;border:1px solid rgba(102,149,215,.26)!important;
+   border-radius:18px!important;backdrop-filter:blur(16px)!important;
+   box-shadow:0 10px 30px rgba(0,0,0,.17)!important;
+ }
+ body .site-header .brand-link{position:relative!important;inset:auto!important;transform:none!important;display:flex!important;align-items:center!important;flex:0 0 auto}
+ body .site-header .brand{width:104px!important;height:42px!important;display:flex!important;align-items:center!important}
+ body .site-header .brand img{width:104px!important;height:42px!important;object-fit:contain!important;object-position:left center!important}
+ body .site-header .menu-toggle{position:relative!important;display:flex!important;align-items:center!important;gap:10px!important;color:#fff!important;z-index:2!important}
+ body .site-header nav{position:absolute!important;top:66px!important;left:0!important;right:0!important;width:100%!important;background:#071326!important;border-radius:15px!important;max-height:calc(100svh - 90px)!important;overflow-y:auto!important}
+ .hero{min-height:max(790px,100svh)!important}
+ .hero-content{padding-top:136px!important;padding-bottom:390px!important;min-height:max(790px,100svh)!important}
+ .hero .eyebrow{max-width:100%!important}
+ .hero h1{position:relative!important;z-index:5!important;max-width:100%!important;overflow-wrap:normal!important}
+ .hero-bottom{z-index:5!important;max-width:100%!important}
+ .hero-symbol-assembly{
+   width:min(75vw,390px)!important;height:min(75vw,390px)!important;
+   top:auto!important;bottom:82px!important;left:50%!important;right:auto!important;
+   transform:translateX(-50%)!important;opacity:1!important;
+ }
+ .hero-symbol-assembly .hero-fixed-v{object-fit:contain!important}
+ .hero-diagnosis{bottom:18px!important;z-index:10!important}
+ .hero-coordinate{display:none!important}
+ .about-valen,.overview,.difference,.numbers,.method,.ecosystem,.challenges,.lead-teaser,.contact,.faq{
+   width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;
+   transform:none!important;min-width:0!important;
+ }
+ .about-valen .wrap,.overview .wrap,.difference .wrap,.numbers .wrap,.method .wrap,.ecosystem .wrap,
+ .challenges .wrap,.lead-teaser .wrap,.contact .wrap,.faq .wrap,
+ .solutions .wrap,.overview-top,.section-line,.split-heading,.challenge-grid{
+    width:calc(100% - 36px)!important;max-width:calc(100% - 36px)!important;
+    margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important;
+ }
+ .section-line,.split-heading,.overview-top,.about-valen-grid,.numbers-grid,.ecosystem-grid,
+ .challenge-grid,.footer-columns,.method-layout{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    transform:none!important;left:auto!important;right:auto!important;
+ }
+ .section-line>* ,.split-heading>* ,.overview-top>* ,.about-valen-grid>* ,.numbers-grid>* ,.ecosystem-grid>* ,
+ .challenge-grid>* ,.method-layout>*{min-width:0!important;max-width:100%!important;transform:none!important}
+ .section-line h2,.section-line h3,.split-heading h2,.overview h2,.about-valen h2,
+ .numbers h2,.ecosystem h2,.challenges h2,.method h2{
+    max-width:100%!important;width:100%!important;
+    font-size:clamp(34px,9vw,57px)!important;line-height:1.05!important;
+    overflow-wrap:break-word!important;word-break:normal!important;
+ }
+ .about-valen p,.overview p,.difference p,.numbers p,.ecosystem p,.challenges p{
+    overflow-wrap:break-word;max-width:100%;line-height:1.5
+ }
+ .solutions-motion,.capability-grid,.challenge-grid{overflow:visible;max-width:100%!important}
+ .contact .contact-sticky,.contact-card{width:100%!important;max-width:100%!important}
+ .contact-copy{width:100%!important;max-width:100%!important}
+}
+@media(max-width:480px){
+ .hero{min-height:max(770px,100svh)!important}
+ .hero-content{padding-top:142px!important;padding-bottom:355px!important;min-height:max(770px,100svh)!important}
+ .hero h1{font-size:clamp(31px,8.4vw,43px)!important;line-height:1.06!important}
+ .hero-symbol-assembly{width:78vw!important;height:78vw!important;bottom:90px!important}
+ .hero-bottom p{font-size:15px!important}
+ .hero-diagnosis{bottom:16px!important}
+ .valen-orbit-track .orbit-planet{width:29px!important;height:29px!important;margin-left:-14.5px!important;margin-top:-14.5px!important}
+}
+@media(min-width:901px){
+ .site-header{z-index:1000!important}
+}
