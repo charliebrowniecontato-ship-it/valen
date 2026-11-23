@@ -1,12 +1,14 @@
 'use strict';
-const toggle=document.querySelector('.menu-toggle');
-const nav=document.querySelector('#main-nav');
-function closeMenu(){if(!toggle||!nav)return;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');nav.classList.remove('is-open');document.body.classList.remove('nav-open')}
-if(toggle&&nav){
- toggle.addEventListener('click',()=>{const opening=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(opening));toggle.setAttribute('aria-label',opening?'Fechar menu':'Abrir menu');nav.classList.toggle('is-open',opening);document.body.classList.toggle('nav-open',opening)});
- nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
- document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
- document.addEventListener('click',e=>{if(!e.target.closest('.site-header'))closeMenu()});
- window.addEventListener('resize',()=>{if(innerWidth>820)closeMenu()},{passive:true});
-}
+const nav=document.querySelector('#main-nav'),toggle=document.querySelector('.menu-toggle');
+const close=()=>{if(!nav||!toggle)return;nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');document.body.classList.remove('nav-open')};
+if(nav&&toggle){
+toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');nav.classList.toggle('is-open',open);document.body.classList.toggle('nav-open',open)});
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(!e.target.closest('.site-header'))close()});window.addEventListener('resize',()=>{if(innerWidth>820)close()},{passive:true});}
 const year=document.querySelector('#year');if(year)year.textContent=String(new Date().getFullYear());
+/* Centralized WhatsApp destination. Do not assign an unverified phone number.
+   Until João Valentim's confirmed number is supplied, CTA retains /diagnostico fallback. */
+const JOAO_WHATSAPP_NUMBER='';
+const opening='Olá, João! Vim pelo site da Valen e gostaria de conversar sobre a estruturação comercial da minha empresa.';
+if(/^55\d{10,11}$/.test(JOAO_WHATSAPP_NUMBER)){
+document.querySelectorAll('.whatsapp-intent').forEach(a=>{a.href='https://wa.me/'+JOAO_WHATSAPP_NUMBER+'?text='+encodeURIComponent(opening);a.target='_blank';a.rel='noopener noreferrer';});
+}
