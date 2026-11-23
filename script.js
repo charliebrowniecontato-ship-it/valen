@@ -7,8 +7,8 @@ nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));document
 const year=document.querySelector('#year');if(year)year.textContent=String(new Date().getFullYear());
 /* Centralized WhatsApp destination. Do not assign an unverified phone number.
    Until João Valentim's confirmed number is supplied, CTA retains /diagnostico fallback. */
-const JOAO_WHATSAPP_NUMBER='';
-const opening='Olá, João! Vim pelo site da Valen e gostaria de conversar sobre a estruturação comercial da minha empresa.';
-if(/^55\d{10,11}$/.test(JOAO_WHATSAPP_NUMBER)){
-document.querySelectorAll('.whatsapp-intent').forEach(a=>{a.href='https://wa.me/'+JOAO_WHATSAPP_NUMBER+'?text='+encodeURIComponent(opening);a.target='_blank';a.rel='noopener noreferrer';});
+const VALEN_WHATSAPP_NUMBER='558487149954';
+const opening='Olá! Vim pelo site da Valen e quero entender qual modelo de aceleração comercial faz mais sentido para minha empresa.';
+if(/^55\\d{10,11}$/.test(VALEN_WHATSAPP_NUMBER)){
+document.querySelectorAll('.whatsapp-intent').forEach(a=>{a.href='https://wa.me/'+VALEN_WHATSAPP_NUMBER+'?text='+encodeURIComponent(opening);a.target='_blank';a.rel='noopener noreferrer';});
 }
