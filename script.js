@@ -9,6 +9,6 @@ const year=document.querySelector('#year');if(year)year.textContent=String(new D
    Until João Valentim's confirmed number is supplied, CTA retains /diagnostico fallback. */
 const VALEN_WHATSAPP_NUMBER='558487149954';
 const opening='Olá! Vim pelo site da Valen e quero entender qual modelo de aceleração comercial faz mais sentido para minha empresa.';
-if(/^55\\d{10,11}$/.test(VALEN_WHATSAPP_NUMBER)){
+if(/^55\d{10,11}$/.test(VALEN_WHATSAPP_NUMBER)){
 document.querySelectorAll('.whatsapp-intent').forEach(a=>{a.href='https://wa.me/'+VALEN_WHATSAPP_NUMBER+'?text='+encodeURIComponent(opening);a.target='_blank';a.rel='noopener noreferrer';});
 }
